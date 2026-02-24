@@ -1,0 +1,19 @@
+[policy]
+default = "warn"      # pass | warn | error — applied to any unspecified license
+
+[policy.licenses]
+"MIT"          = "pass"
+"Apache-2.0"   = "pass"
+"BSD-2-Clause" = "pass"
+"BSD-3-Clause" = "pass"
+"ISC"          = "pass"
+"0BSD"         = "pass"
+"Unlicense"    = "pass"
+"CC0-1.0"      = "pass"
+"LGPL-2.1"    = "warn"
+"MPL-2.0"     = "warn"
+"LGPL-3.0"    = "warn"
+"GPL-2.0"     = "error"
+"GPL-3.0"     = "error"
+"AGPL-3.0"    = "error"
+"unknown"      = "warn"
