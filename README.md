@@ -5,6 +5,7 @@
 [![License](https://img.shields.io/github/license/QuentinRob/license-checkr)](LICENSE)
 [![Rust 2021](https://img.shields.io/badge/rust-2021_edition-orange?logo=rust)](https://www.rust-lang.org)
 [![Stars](https://img.shields.io/github/stars/QuentinRob/license-checkr?style=social)](https://github.com/QuentinRob/license-checkr/stargazers)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-yellow?logo=buy-me-a-coffee&logoColor=white)](https://buymeacoffee.com/quentinrob)
 
 > **Scan your dependencies. Know your risks. Ship with confidence.**
 
@@ -239,6 +240,16 @@ Please open an issue before starting work on a large change so we can discuss th
 ## 📄 License
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+## ☕ Support
+
+If `license-checkr` saved you time, a coffee is always appreciated — but never required!
+
+<a href="https://buymeacoffee.com/quentinrob">
+  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="50" />
+</a>
 
 ---
 
