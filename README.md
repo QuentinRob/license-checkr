@@ -196,8 +196,8 @@ license-checkr --pdf report.pdf
 ```
 
 Generates a multi-page PDF with:
-- Cover page with scan summary and statistics
-- Bar charts for risk distribution and ecosystem breakdown
+- Cover page with scan summary and verdict statistics
+- Risk summary table with per-verdict counts and ecosystem breakdown
 - Full dependency table (paginated)
 
 ---
