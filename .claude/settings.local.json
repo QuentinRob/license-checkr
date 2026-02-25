@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__acp__Edit",
+      "mcp__acp__Write",
+      "Bash(gh issue create:*)",
+      "Bash(gh issue close:*)",
+      "Bash(cargo check:*)",
+      "Bash(gh label create:*)",
+      "Bash(gh issue list:*)",
+      "Bash(git describe:*)",
+      "Bash(gh repo view:*)",
+      "Bash(gh api:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh issue:*)",
+      "Bash(gh label:*)",
+      "Bash(cat:*)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cargo check 2>&1"
+          }
+        ]
+      }
+    ]
+  }
+}
