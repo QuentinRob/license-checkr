@@ -1,3 +1,15 @@
+//! `license-checkr` — scan dependency manifests, classify licenses, and enforce policy.
+//!
+//! # Flow
+//! 1. Parse CLI arguments ([`cli`]).
+//! 2. Load policy config ([`config::load_config`]).
+//! 3. Auto-detect ecosystems ([`detector::detect_ecosystems`]).
+//! 4. Analyze each ecosystem's manifests ([`analyzer`]).
+//! 5. Optionally enrich from package registries (`--online`, [`registry`]).
+//! 6. Classify licenses and apply policy ([`license`], [`config::apply_policy`]).
+//! 7. Render the requested report ([`report`]).
+//! 8. Exit `0` (clean) or `1` (at least one [`models::PolicyVerdict::Error`]).
+
 mod analyzer;
 mod cli;
 mod config;
@@ -57,6 +69,7 @@ async fn main() -> Result<()> {
             Ecosystem::Python => analyzer::python::PythonAnalyzer::new().analyze(&path)?,
             Ecosystem::Java => analyzer::java::JavaAnalyzer::new().analyze(&path)?,
             Ecosystem::Node => analyzer::node::NodeAnalyzer::new().analyze(&path)?,
+            Ecosystem::DotNet => analyzer::dotnet::DotNetAnalyzer::new().analyze(&path)?,
         };
 
         if !cli.quiet {
@@ -88,8 +101,17 @@ async fn main() -> Result<()> {
         dep.verdict = apply_policy(&config, Some(license));
     }
 
+    // Resolve effective report format: --pdf implies PDF format
+    let report_format = match &cli.pdf {
+        Some(_) => ReportFormat::Pdf,
+        None => cli.report,
+    };
+    let pdf_path = cli
+        .pdf
+        .unwrap_or_else(|| std::path::PathBuf::from("license-report.pdf"));
+
     // Render report
-    match cli.report {
+    match report_format {
         ReportFormat::Terminal => {
             report::terminal::render(&all_deps, &path, cli.verbose, cli.quiet)?;
         }
@@ -97,7 +119,7 @@ async fn main() -> Result<()> {
             println!("{}", serde_json::to_string_pretty(&all_deps)?);
         }
         ReportFormat::Pdf => {
-            report::pdf::render(&all_deps, &path, &cli.pdf)?;
+            report::pdf::render(&all_deps, &path, &pdf_path)?;
         }
     }
 
@@ -114,6 +136,10 @@ async fn main() -> Result<()> {
 }
 
 async fn enrich_online(deps: &mut Vec<models::Dependency>, quiet: bool) -> Result<()> {
+    use futures::future::join_all;
+
+    const BATCH_SIZE: usize = 75;
+
     let client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(10))
         .build()?;
@@ -132,34 +158,45 @@ async fn enrich_online(deps: &mut Vec<models::Dependency>, quiet: bool) -> Resul
         None
     };
 
-    for dep in deps.iter_mut() {
-        if let Some(pb) = &pb {
-            pb.set_message(dep.name.clone());
-        }
+    for batch in deps.chunks_mut(BATCH_SIZE) {
+        let futures: Vec<_> = batch
+            .iter()
+            .map(|dep| {
+                let client = client.clone();
+                let name = dep.name.clone();
+                let version = dep.version.clone();
+                let ecosystem = dep.ecosystem.clone();
+                async move {
+                    match ecosystem {
+                        Ecosystem::Rust => {
+                            registry::crates_io::fetch_license(&client, &name, &version).await
+                        }
+                        Ecosystem::Python => {
+                            registry::pypi::fetch_license(&client, &name, &version).await
+                        }
+                        Ecosystem::Java => {
+                            registry::maven::fetch_license(&client, &name, &version).await
+                        }
+                        Ecosystem::Node => {
+                            registry::npm::fetch_license(&client, &name, &version).await
+                        }
+                        Ecosystem::DotNet => Ok(None),
+                    }
+                }
+            })
+            .collect();
 
-        let result = match dep.ecosystem {
-            Ecosystem::Rust => {
-                registry::crates_io::fetch_license(&client, &dep.name, &dep.version).await
-            }
-            Ecosystem::Python => {
-                registry::pypi::fetch_license(&client, &dep.name, &dep.version).await
-            }
-            Ecosystem::Java => {
-                registry::maven::fetch_license(&client, &dep.name, &dep.version).await
-            }
-            Ecosystem::Node => {
-                registry::npm::fetch_license(&client, &dep.name, &dep.version).await
-            }
-        };
+        let results = join_all(futures).await;
 
-        if let Ok(Some(license)) = result {
-            dep.license_raw = Some(license.clone());
-            dep.license_spdx = Some(license);
-            dep.source = LicenseSource::Registry;
-        }
-
-        if let Some(pb) = &pb {
-            pb.inc(1);
+        for (dep, result) in batch.iter_mut().zip(results) {
+            if let Ok(Some(license)) = result {
+                dep.license_raw = Some(license.clone());
+                dep.license_spdx = Some(license);
+                dep.source = LicenseSource::Registry;
+            }
+            if let Some(pb) = &pb {
+                pb.inc(1);
+            }
         }
     }
 

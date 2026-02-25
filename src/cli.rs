@@ -27,9 +27,9 @@ pub struct Cli {
     #[arg(long, default_value = "terminal", value_name = "FORMAT")]
     pub report: ReportFormat,
 
-    /// PDF output path
-    #[arg(long, default_value = "license-report.pdf")]
-    pub pdf: PathBuf,
+    /// PDF output path; use without value to default to license-report.pdf
+    #[arg(long, value_name = "FILE", num_args = 0..=1, default_missing_value = "license-report.pdf")]
+    pub pdf: Option<PathBuf>,
 
     /// Exclude an ecosystem from scanning (repeatable)
     #[arg(long = "exclude-lang", value_name = "LANG")]
@@ -57,6 +57,7 @@ pub enum EcosystemArg {
     Python,
     Java,
     Node,
+    Dotnet,
 }
 
 impl From<&EcosystemArg> for Ecosystem {
@@ -66,6 +67,7 @@ impl From<&EcosystemArg> for Ecosystem {
             EcosystemArg::Python => Ecosystem::Python,
             EcosystemArg::Java => Ecosystem::Java,
             EcosystemArg::Node => Ecosystem::Node,
+            EcosystemArg::Dotnet => Ecosystem::DotNet,
         }
     }
 }

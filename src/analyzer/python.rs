@@ -7,9 +7,15 @@ use serde::Deserialize;
 
 use crate::models::{Dependency, Ecosystem, LicenseRisk, LicenseSource, PolicyVerdict};
 
+/// Analyzer for Python projects.
+///
+/// Searches for manifests in priority order:
+/// `Pipfile.lock` (pinned) → `requirements.txt` → `pyproject.toml`.
+/// Results are deduplicated by package name (case-insensitive).
 pub struct PythonAnalyzer;
 
 impl PythonAnalyzer {
+    /// Create a new `PythonAnalyzer`.
     pub fn new() -> Self {
         Self
     }

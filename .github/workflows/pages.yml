@@ -1,0 +1,48 @@
+name: Deploy GitHub Pages
+
+# Triggers on any tag that starts with "v" (e.g. v1.0.0, v0.2.1)
+on:
+  push:
+    tags:
+      - 'v*'
+
+# Required permissions for the GitHub Pages deployment action
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one deployment at a time
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Inject the release tag into the site (replaces VERSION_PLACEHOLDER)
+      - name: Set version in site
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          sed -i "s/VERSION_PLACEHOLDER/${TAG}/g" docs/index.html
+          echo "Deploying version: ${TAG}"
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './docs'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

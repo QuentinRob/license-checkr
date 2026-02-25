@@ -19,9 +19,14 @@ struct CargoLockPackage {
     source: Option<String>,
 }
 
+/// Analyzer for Rust projects managed by Cargo.
+///
+/// Parses `Cargo.lock` and returns all external crate dependencies,
+/// filtering out local workspace members (entries with no `source` field).
 pub struct RustAnalyzer;
 
 impl RustAnalyzer {
+    /// Create a new `RustAnalyzer`.
     pub fn new() -> Self {
         Self
     }

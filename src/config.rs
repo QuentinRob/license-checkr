@@ -6,15 +6,21 @@ use serde::Deserialize;
 
 use crate::models::PolicyVerdict;
 
+/// Root configuration structure, deserialized from `license-checkr.toml`.
 #[derive(Debug, Deserialize)]
 pub struct Config {
+    /// License policy rules.
     pub policy: PolicyConfig,
 }
 
+/// Defines how licenses are evaluated.
 #[derive(Debug, Deserialize)]
 pub struct PolicyConfig {
+    /// Verdict applied to any license not explicitly listed in `licenses`.
+    /// Defaults to `warn`.
     #[serde(default = "default_policy_action")]
     pub default: PolicyAction,
+    /// Per-license overrides keyed by SPDX identifier (e.g. `"MIT"`, `"GPL-3.0"`).
     #[serde(default)]
     pub licenses: HashMap<String, PolicyAction>,
 }
@@ -23,15 +29,20 @@ fn default_policy_action() -> PolicyAction {
     PolicyAction::Warn
 }
 
+/// The action to take when a dependency's license matches a policy rule.
 #[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "lowercase")]
 pub enum PolicyAction {
+    /// Dependency is compliant; no action needed.
     Pass,
+    /// Dependency warrants review but does not fail the scan.
     Warn,
+    /// Dependency violates policy; the CLI exits with code 1.
     Error,
 }
 
 impl PolicyAction {
+    /// Convert to the corresponding [`PolicyVerdict`].
     pub fn to_verdict(&self) -> PolicyVerdict {
         match self {
             PolicyAction::Pass => PolicyVerdict::Pass,
@@ -42,6 +53,10 @@ impl PolicyAction {
 }
 
 impl Default for Config {
+    /// Built-in default policy used when no config file is found.
+    ///
+    /// Permissive licenses pass, weak-copyleft licenses warn, and strong-copyleft
+    /// licenses (GPL, AGPL) produce an error.
     fn default() -> Self {
         let mut licenses = HashMap::new();
         licenses.insert("MIT".to_string(), PolicyAction::Pass);
@@ -64,6 +79,12 @@ impl Default for Config {
     }
 }
 
+/// Load the policy configuration, searching in order:
+///
+/// 1. `config_override` — path passed via `--config`
+/// 2. `<project_path>/license-checkr.toml`
+/// 3. `~/.config/license-checkr/config.toml`
+/// 4. Built-in [`Config::default`]
 pub fn load_config(project_path: &Path, config_override: Option<&Path>) -> Result<Config> {
     if let Some(path) = config_override {
         let content = std::fs::read_to_string(path)?;
@@ -90,6 +111,12 @@ pub fn load_config(project_path: &Path, config_override: Option<&Path>) -> Resul
     Ok(Config::default())
 }
 
+/// Determine the policy verdict for a given SPDX license identifier.
+///
+/// Lookup order:
+/// 1. Exact match in `config.policy.licenses`
+/// 2. `"unknown"` key if `license_spdx` is `None` or `"unknown"`
+/// 3. `config.policy.default`
 pub fn apply_policy(config: &Config, license_spdx: Option<&str>) -> PolicyVerdict {
     let license = license_spdx.unwrap_or("unknown");
 

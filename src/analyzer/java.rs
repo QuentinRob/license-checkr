@@ -8,9 +8,14 @@ use regex::Regex;
 
 use crate::models::{Dependency, Ecosystem, LicenseRisk, LicenseSource, PolicyVerdict};
 
+/// Analyzer for Java/Kotlin projects managed by Maven or Gradle.
+///
+/// Parses `pom.xml`, `build.gradle` / `build.gradle.kts`, and `gradle.lockfile`.
+/// Dependencies are deduplicated by `group:artifact:version` key.
 pub struct JavaAnalyzer;
 
 impl JavaAnalyzer {
+    /// Create a new `JavaAnalyzer`.
     pub fn new() -> Self {
         Self
     }

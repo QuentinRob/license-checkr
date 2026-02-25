@@ -7,9 +7,16 @@ use serde_json::Value;
 
 use crate::models::{Dependency, Ecosystem, LicenseRisk, LicenseSource, PolicyVerdict};
 
+/// Analyzer for Node.js projects managed by npm, Yarn, or pnpm.
+///
+/// Parses lock files in priority order:
+/// `package-lock.json` (v2/v3) → `yarn.lock` → `package.json` (fallback).
+/// License information embedded in `package-lock.json` or local `node_modules`
+/// is extracted and stored on the [`Dependency`](crate::models::Dependency).
 pub struct NodeAnalyzer;
 
 impl NodeAnalyzer {
+    /// Create a new `NodeAnalyzer`.
     pub fn new() -> Self {
         Self
     }
