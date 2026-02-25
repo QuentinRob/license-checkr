@@ -55,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Proprietary/commercial keyword detection
 
 #### Policy engine
-- TOML config at `./license-checkr.toml`, `~/.config/license-checkr/config.toml`, or `--config <path>`
+- TOML config at `./.license-checkr/config.toml`, `~/.config/license-checkr/config.toml`, or `--config <path>`
 - Per-SPDX-identifier rules: `pass`, `warn`, `error`
 - Catch-all `default` verdict for unlisted licenses
 - Built-in defaults: permissive → pass, LGPL-2.1 → warn, GPL/AGPL → error

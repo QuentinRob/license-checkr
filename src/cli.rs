@@ -19,7 +19,7 @@ pub struct Cli {
     #[arg(long)]
     pub online: bool,
 
-    /// Policy config file [default: ./license-checkr.toml, fallback ~/.config/license-checkr/config.toml]
+    /// Policy config file [default: ./.license-checkr/config.toml, fallback ~/.config/license-checkr/config.toml]
     #[arg(long)]
     pub config: Option<PathBuf>,
 

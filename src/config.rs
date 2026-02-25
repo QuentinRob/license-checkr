@@ -6,7 +6,7 @@ use serde::Deserialize;
 
 use crate::models::PolicyVerdict;
 
-/// Root configuration structure, deserialized from `license-checkr.toml`.
+/// Root configuration structure, deserialized from `.license-checkr/config.toml`.
 #[derive(Debug, Deserialize)]
 pub struct Config {
     /// License policy rules.
@@ -82,7 +82,7 @@ impl Default for Config {
 /// Load the policy configuration, searching in order:
 ///
 /// 1. `config_override` — path passed via `--config`
-/// 2. `<project_path>/license-checkr.toml`
+/// 2. `<project_path>/.license-checkr/config.toml`
 /// 3. `~/.config/license-checkr/config.toml`
 /// 4. Built-in [`Config::default`]
 pub fn load_config(project_path: &Path, config_override: Option<&Path>) -> Result<Config> {
@@ -91,7 +91,7 @@ pub fn load_config(project_path: &Path, config_override: Option<&Path>) -> Resul
         return Ok(toml::from_str(&content)?);
     }
 
-    let project_config = project_path.join("license-checkr.toml");
+    let project_config = project_path.join(".license-checkr").join("config.toml");
     if project_config.exists() {
         let content = std::fs::read_to_string(&project_config)?;
         return Ok(toml::from_str(&content)?);

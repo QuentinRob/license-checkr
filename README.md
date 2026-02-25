@@ -102,7 +102,7 @@ Multiple ecosystems are detected automatically in a single pass. Use `--exclude-
 
 ## ⚙️ Policy Configuration
 
-Drop a `license-checkr.toml` file in your project root (or at `~/.config/license-checkr/config.toml` for a global policy). If no config is found, a sensible default policy is applied.
+Create a `.license-checkr/config.toml` file in your project root (or at `~/.config/license-checkr/config.toml` for a global policy). If no config is found, a sensible default policy is applied.
 
 ```toml
 [policy]
@@ -137,7 +137,7 @@ default = "warn"   # pass | warn | error
 ### Config lookup order
 
 1. `--config <FILE>` argument
-2. `./license-checkr.toml` (project-level)
+2. `./.license-checkr/config.toml` (project-level)
 3. `~/.config/license-checkr/config.toml` (global)
 4. Built-in default policy
 
