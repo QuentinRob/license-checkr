@@ -22,6 +22,9 @@ jobs:
         with:
           components: clippy
 
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libfontconfig1-dev
+
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
 

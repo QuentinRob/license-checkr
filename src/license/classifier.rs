@@ -22,7 +22,8 @@ pub fn classify(license: &str) -> LicenseRisk {
     }
 
     // Normalize common non-SPDX strings first
-    let normalized = normalize(trimmed);
+    // Also normalize slash separator to OR (e.g. "MIT/Apache-2.0" → "MIT OR Apache-2.0")
+    let normalized = normalize(trimmed).replace('/', " OR ");
 
     // Handle SPDX OR expressions — take the most permissive component
     if normalized.contains(" OR ") {
@@ -90,6 +91,13 @@ mod tests {
     #[test]
     fn test_or_expression() {
         assert_eq!(classify("MIT OR GPL-3.0"), LicenseRisk::Permissive);
+    }
+
+    #[test]
+    fn test_slash_separator() {
+        assert_eq!(classify("MIT/Apache-2.0"), LicenseRisk::Permissive);
+        assert_eq!(classify("MIT/GPL-3.0"), LicenseRisk::Permissive);
+        assert_eq!(classify("GPL-3.0/LGPL-3.0"), LicenseRisk::WeakCopyleft);
     }
 
     #[test]
