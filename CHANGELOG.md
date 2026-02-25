@@ -1,0 +1,58 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [0.1.0] — 2026-02-25
+
+### Added
+
+#### Core CLI
+- `license-checkr` binary with `clap` v4 derive-based argument parsing
+- Flags: `--online`, `--config`, `--report`, `--pdf [FILE]`, `--exclude-lang`, `-v/--verbose`, `-q/--quiet`
+- Exit code `1` when any dependency produces a `PolicyVerdict::Error`; `0` otherwise
+
+#### Ecosystem support (auto-detected, all opt-out via `--exclude-lang`)
+- **Rust** — parses `Cargo.lock`; filters local workspace members
+- **Python** — parses `Pipfile.lock` → `requirements.txt` → `pyproject.toml` (priority order, deduplicated)
+- **Java** — parses `pom.xml`, `build.gradle` / `build.gradle.kts`, `gradle.lockfile`
+- **.NET** — parses `*.csproj` / `*.fsproj` (`<PackageReference>`), `packages.config`, `paket.lock`
+- **Node.js** — parses `package-lock.json` (v2/v3), `yarn.lock`, `package.json`; extracts embedded license data
+
+#### Online registry enrichment (`--online`)
+- Async batch fetching (75 dependencies per batch) via `futures::join_all`
+- Registries: crates.io (Rust), PyPI (Python), Maven Central (Java), npm (Node.js)
+- Progress bar in non-quiet mode
+
+#### License classification
+- SPDX identifier classifier covering 24 permissive, 16 weak-copyleft, and 10 strong-copyleft licenses
+- Normalizer mapping 20+ common non-SPDX strings to canonical SPDX identifiers
+- SPDX expression support: `MIT OR Apache-2.0` (most permissive wins), `MIT AND GPL-3.0` (most restrictive wins)
+- `WITH` exception stripping (e.g. `GPL-2.0 WITH Classpath-exception-2.0`)
+- Proprietary/commercial keyword detection
+
+#### Policy engine
+- TOML config at `./license-checkr.toml`, `~/.config/license-checkr/config.toml`, or `--config <path>`
+- Per-SPDX-identifier rules: `pass`, `warn`, `error`
+- Catch-all `default` verdict for unlisted licenses
+- Built-in defaults: permissive → pass, LGPL-2.1 → warn, GPL/AGPL → error
+
+#### Report formats
+- **Terminal** — colored summary box + per-verdict tables using `comfy-table`
+- **JSON** — pretty-printed full dependency array via `serde_json`
+- **PDF** — multi-page report with cover page, risk + ecosystem bar charts (via `plotters`), and paginated dependency table (via `printpdf`)
+
+#### Documentation & infrastructure
+- `///` doc comments on all public types, fields, and functions
+- `//!` module-level documentation for `registry`, `license`, `report`, `main`
+- `README.md` with badges, feature grid, ecosystem table, policy config reference, and contributing guide
+- `docs/index.html` — GitHub Pages landing site (dark theme, responsive, scroll animations, terminal demo mockup, no external JS)
+- `.github/workflows/pages.yml` — deploys `docs/` to GitHub Pages on `v*` tag push; injects release version via `sed`
+- `.github/workflows/ci.yml` — runs `cargo test` + `cargo clippy` on push/PR to `main`
+- 19 unit tests covering all parsers, SPDX classifier, normalizer, and Maven POM extraction
+
+[0.1.0]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.0
