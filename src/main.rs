@@ -135,7 +135,7 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-async fn enrich_online(deps: &mut Vec<models::Dependency>, quiet: bool) -> Result<()> {
+async fn enrich_online(deps: &mut [models::Dependency], quiet: bool) -> Result<()> {
     use futures::future::join_all;
 
     const BATCH_SIZE: usize = 75;

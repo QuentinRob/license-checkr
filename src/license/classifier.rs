@@ -53,32 +53,32 @@ fn classify_single(id: &str) -> LicenseRisk {
 }
 
 fn most_permissive(risks: Vec<LicenseRisk>) -> LicenseRisk {
-    if risks.iter().any(|r| *r == LicenseRisk::Permissive) {
+    if risks.contains(&LicenseRisk::Permissive) {
         return LicenseRisk::Permissive;
     }
-    if risks.iter().any(|r| *r == LicenseRisk::WeakCopyleft) {
+    if risks.contains(&LicenseRisk::WeakCopyleft) {
         return LicenseRisk::WeakCopyleft;
     }
-    if risks.iter().any(|r| *r == LicenseRisk::StrongCopyleft) {
+    if risks.contains(&LicenseRisk::StrongCopyleft) {
         return LicenseRisk::StrongCopyleft;
     }
-    if risks.iter().any(|r| *r == LicenseRisk::Proprietary) {
+    if risks.contains(&LicenseRisk::Proprietary) {
         return LicenseRisk::Proprietary;
     }
     LicenseRisk::Unknown
 }
 
 fn most_restrictive(risks: Vec<LicenseRisk>) -> LicenseRisk {
-    if risks.iter().any(|r| *r == LicenseRisk::Proprietary) {
+    if risks.contains(&LicenseRisk::Proprietary) {
         return LicenseRisk::Proprietary;
     }
-    if risks.iter().any(|r| *r == LicenseRisk::StrongCopyleft) {
+    if risks.contains(&LicenseRisk::StrongCopyleft) {
         return LicenseRisk::StrongCopyleft;
     }
-    if risks.iter().any(|r| *r == LicenseRisk::WeakCopyleft) {
+    if risks.contains(&LicenseRisk::WeakCopyleft) {
         return LicenseRisk::WeakCopyleft;
     }
-    if risks.iter().any(|r| *r == LicenseRisk::Permissive) {
+    if risks.contains(&LicenseRisk::Permissive) {
         return LicenseRisk::Permissive;
     }
     LicenseRisk::Unknown
