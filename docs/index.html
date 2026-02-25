@@ -302,11 +302,14 @@
     .icon-moon { display: block; }
 
     /* ── Hero ─────────────────────────────────────────── */
+    :root { --nav-h: 76px; }
+
     .hero {
-      padding: 120px 0 96px;
+      padding: calc(120px + var(--nav-h)) 0 96px;
+      margin-top: calc(-1 * var(--nav-h));
       text-align: center;
       position: relative;
-      min-height: 92vh;
+      min-height: 100vh;
       display: flex; align-items: center;
     }
     .hero > .container { position: relative; z-index: 1; width: 100%; }
@@ -516,6 +519,31 @@
     .t-bx { color: #3a4a5c; }
     .t-lb { color: var(--text-2); }
 
+    /* ── Terminal light mode ──────────────────────────── */
+    [data-theme="light"] .terminal,
+    .light-vars .terminal {
+      background: rgba(248, 250, 255, 0.94);
+      box-shadow:
+        0 8px 40px rgba(60,80,140,0.13),
+        0 0 0 1px rgba(0,153,80,0.07),
+        inset 0 1px 0 rgba(255,255,255,0.98);
+    }
+    [data-theme="light"] .terminal-bar,
+    .light-vars .terminal-bar {
+      background: rgba(0,20,80,0.04);
+      border-bottom-color: rgba(0,20,80,0.08);
+    }
+    [data-theme="light"] .terminal .t-c,
+    .light-vars .terminal .t-c   { color: #1a2540; }
+    [data-theme="light"] .terminal .t-bx,
+    .light-vars .terminal .t-bx  { color: #9ab0cc; }
+    [data-theme="light"] .terminal .t-lb,
+    .light-vars .terminal .t-lb  { color: #2b4066; }
+    [data-theme="light"] .terminal .t-m,
+    .light-vars .terminal .t-m   { color: #697fa0; }
+    [data-theme="light"] .terminal .t-title,
+    .light-vars .terminal .t-title { color: #697fa0; }
+
     /* ── Policy / code block ──────────────────────────── */
     .policy-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
     .policy-text h2 {
@@ -562,6 +590,20 @@
     .tk-e { color: var(--red); }    /* error */
     .tk-c { color: var(--text-muted); opacity: 0.55; } /* comment */
     .tk-q { color: var(--blue); opacity: 0.8; } /* quoted string */
+
+    /* ── Code block light mode ────────────────────────── */
+    [data-theme="light"] .code-block,
+    .light-vars .code-block {
+      background: rgba(248, 250, 255, 0.94);
+      box-shadow:
+        0 8px 40px rgba(60,80,140,0.10),
+        inset 0 1px 0 rgba(255,255,255,0.98);
+    }
+    [data-theme="light"] .code-block-hdr,
+    .light-vars .code-block-hdr {
+      background: rgba(0,20,80,0.04);
+      border-bottom-color: rgba(0,20,80,0.08);
+    }
 
     /* ── Risk table ───────────────────────────────────── */
     .risk-table-outer { border-radius: var(--r-xl); overflow: hidden; }
@@ -806,7 +848,7 @@
       <div class="feature-card glass" style="border-radius:var(--r-xl)">
         <span class="feature-icon">🏷️</span>
         <h3>Full SPDX Support</h3>
-        <p>Normalizes 20+ common strings to SPDX identifiers. Evaluates <code>MIT OR Apache-2.0</code> (most permissive wins) and <code>MIT AND GPL-3.0</code> (most restrictive wins).</p>
+        <p>Normalizes 20+ common strings to SPDX identifiers. Parses compound expressions like <code>(Apache-2.0 OR MIT) AND BSD-3-Clause</code> with correct precedence — <code>AND</code> binds tighter than <code>OR</code>, parentheses override.</p>
       </div>
       <div class="feature-card glass" style="border-radius:var(--r-xl)">
         <span class="feature-icon">📊</span>
@@ -889,7 +931,7 @@
       <div class="policy-text fade-in">
         <div class="section-tag">Policy engine</div>
         <h2>Your rules.<br>Your project.</h2>
-        <p>Drop a <code style="font-size:0.88em;color:var(--text-2);background:var(--glass-bg);border:1px solid var(--glass-border);padding:2px 6px;border-radius:5px;">license-checkr.toml</code> at your project root and define exactly which licenses are acceptable, which need review, and which are blocked.</p>
+        <p>Drop a <code style="font-size:0.88em;color:var(--text-2);background:var(--glass-bg);border:1px solid var(--glass-border);padding:2px 6px;border-radius:5px;">.license-checkr/config.toml</code> at your project root and define exactly which licenses are acceptable, which need review, and which are blocked.</p>
         <p>No config file? Built-in defaults are already sensible — permissive licenses pass, weak-copyleft warns, and GPL/AGPL are errors.</p>
         <ul class="policy-points">
           <li>Per-license rules keyed by SPDX identifier</li>
@@ -900,7 +942,7 @@
       </div>
       <div class="fade-in">
         <div class="code-block">
-          <div class="code-block-hdr">license-checkr.toml</div>
+          <div class="code-block-hdr">.license-checkr/config.toml</div>
           <pre>
 <span class="tk-c"># Verdict for any license not listed below</span>
 <span class="tk-s">[policy]</span>

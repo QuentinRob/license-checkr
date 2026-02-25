@@ -20,7 +20,7 @@
 - 📡 **Online enrichment** — fetch missing license data from crates.io, PyPI, Maven Central, and npm
 - ⚖️ **Policy engine** — define per-license rules (`pass` / `warn` / `error`) in a simple TOML file
 - 🏷️ **SPDX-aware** — normalizes 20+ non-standard license strings to SPDX identifiers
-- 🧮 **Expression support** — correctly evaluates `MIT OR Apache-2.0` and `MIT AND GPL-3.0` expressions
+- 🧮 **Expression support** — parses full SPDX compound expressions including `(Apache-2.0 OR MIT) AND BSD-3-Clause` with proper operator precedence (`AND` binds tighter than `OR`, parentheses override)
 - 📊 **Multiple outputs** — colored terminal table, machine-readable JSON, or a shareable PDF report
 - 🚦 **CI-friendly** — exits with code `1` when a policy error is found; `0` otherwise
 
