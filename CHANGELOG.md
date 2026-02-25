@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.2] — 2026-02-25
+
+### Added
+- Full SPDX compound expression parser with proper operator precedence:
+  `AND` binds tighter than `OR`, parentheses override, `WITH` exception
+  clauses recognized and stripped before evaluation (#32)
+- 10 new unit tests covering all expression forms: simple, OR/AND, nested
+  parentheses, precedence rules, slash separator, WITH exceptions (#32)
+
+### Changed
+- Config file moved from `license-checkr.toml` at the project root to
+  `.license-checkr/config.toml` in a hidden directory, following the
+  convention of `.github/` and `.vscode/` (#17, #18)
+- PDF report rewritten with native `printpdf` primitives; new
+  "Liquid Glass" design with cover page, risk summary table, and paginated
+  dependency table — `plotters` and `image` dependencies removed (#33)
+
+### Fixed
+- GitHub license detection: removed non-standard trailing content from
+  `LICENSE` that caused GitHub's Licensee to report the license as
+  "Unknown" (#16)
+- 13 Clippy lints resolved (manual_contains, needless_borrows_for_generic_args,
+  ptr_arg) that were failing the CI lint job (#15)
+- README PDF section, Rust eco-card file list, and landing-page install
+  command corrected to match actual implementation (#34)
+
+---
+
 ## [0.1.1] — 2026-02-25
 
 ### Added
@@ -74,5 +102,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.github/workflows/ci.yml` — runs `cargo test` + `cargo clippy` on push/PR to `main`
 - 19 unit tests covering all parsers, SPDX classifier, normalizer, and Maven POM extraction
 
+[0.1.2]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.2
 [0.1.1]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.1
 [0.1.0]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.0
