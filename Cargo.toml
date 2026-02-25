@@ -1,6 +1,6 @@
 [package]
 name = "license-checkr"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Scan project dependencies and check license compliance"
 license = "MIT"

@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.1] — 2026-02-25
+
+### Added
+- `LICENSE` file — MIT license with a non-binding Buy Me a Coffee donation note (#11)
+- `.github/FUNDING.yml` — enables GitHub's native Sponsor button pointing to Buy Me a Coffee (#12)
+- Buy Me a Coffee badge in README header and `☕ Support` section in README (#12)
+- `license = "MIT"` field in `Cargo.toml` for crates.io metadata (#11)
+
+### Fixed
+- License classifier now handles slash `/` as an OR-equivalent separator
+  (e.g. `MIT/Apache-2.0` is treated as `MIT OR Apache-2.0`, most permissive wins) (#9)
+- CI job now installs `libfontconfig1-dev` on the Ubuntu runner before building,
+  fixing the `yeslogic-fontconfig-sys` build failure (#10)
+
+### Changed
+- GitHub Pages site redesigned with liquid glass aesthetic and light/dark theme toggle
+
+---
+
 ## [0.1.0] — 2026-02-25
 
 ### Added
@@ -55,4 +74,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.github/workflows/ci.yml` — runs `cargo test` + `cargo clippy` on push/PR to `main`
 - 19 unit tests covering all parsers, SPDX classifier, normalizer, and Maven POM extraction
 
+[0.1.1]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.1
 [0.1.0]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.0
