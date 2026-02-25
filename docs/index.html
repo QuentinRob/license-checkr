@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,661 +11,733 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <noscript><style>.fade-in,.stagger>*{opacity:1!important;transform:none!important}</style></noscript>
   <style>
+    /* ── Reset ────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { overflow-x: hidden; }
+    a { text-decoration: none; }
+    a:hover { text-decoration: none; }
+    code { font-family: var(--mono); }
 
+    /* ── Dark theme (default) ─────────────────────────── */
     :root {
-      --bg:           #0d1117;
-      --bg-subtle:    #161b22;
-      --bg-card:      #1c2128;
-      --border:       #30363d;
-      --border-muted: #21262d;
-      --text:         #e6edf3;
-      --text-2:       #adbac7;
-      --text-muted:   #768390;
-      --green:        #3fb950;
-      --green-glow:   rgba(63,185,80,0.12);
-      --green-border: rgba(63,185,80,0.25);
-      --blue:         #58a6ff;
-      --orange:       #e3b341;
-      --red:          #f47067;
-      --font:         'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      --mono:         'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
-      --r:   8px;
-      --r-lg: 12px;
-      --r-xl: 16px;
+      --bg:               #07090f;
+      --bg-2:             #0c1120;
+      --orb-1:            rgba(0, 210, 106, 0.13);
+      --orb-2:            rgba(77, 166, 255, 0.11);
+      --orb-3:            rgba(168, 85, 247, 0.09);
+
+      --glass-bg:         rgba(255,255,255,0.045);
+      --glass-bg-h:       rgba(255,255,255,0.075);
+      --glass-border:     rgba(255,255,255,0.10);
+      --glass-border-h:   rgba(255,255,255,0.18);
+      --glass-hi:         rgba(255,255,255,0.07); /* inner top highlight */
+      --glass-shadow:     0 4px 24px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.07);
+      --glass-shadow-h:   0 20px 60px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12);
+      --glass-blur:       blur(22px) saturate(180%);
+
+      --text:             #dce8f8;
+      --text-2:           #8daac8;
+      --text-muted:       #4b657f;
+      --divider:          rgba(255,255,255,0.07);
+
+      --green:            #00d26a;
+      --green-dim:        rgba(0,210,106,0.12);
+      --green-glow:       rgba(0,210,106,0.22);
+      --green-border:     rgba(0,210,106,0.32);
+      --blue:             #4da6ff;
+      --purple:           #a855f7;
+      --orange:           #ffb340;
+      --red:              #ff5757;
+
+      --badge-bg:         rgba(0,210,106,0.10);
+      --badge-border:     rgba(0,210,106,0.28);
+
+      --terminal-bg:      rgba(3, 7, 18, 0.75);
+      --terminal-bar:     rgba(255,255,255,0.04);
+
+      --font:  'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --mono:  'JetBrains Mono', 'Cascadia Code', monospace;
+      --r:     10px;
+      --r-lg:  14px;
+      --r-xl:  20px;
+      --r-2xl: 28px;
     }
 
-    html { scroll-behavior: smooth; }
+    /* ── Light theme ──────────────────────────────────── */
+    @media (prefers-color-scheme: light) {
+      :root:not([data-theme="dark"]) { --is-light: 1; }
+    }
+    :root[data-theme="light"] { --is-light: 1; }
 
+    :root:not([data-theme="dark"]):has(--is-light),
+    [data-theme="light"] {
+      --bg:               #f3f6ff;
+      --bg-2:             #eaeffe;
+      --orb-1:            rgba(0, 168, 84, 0.10);
+      --orb-2:            rgba(29, 95, 217, 0.09);
+      --orb-3:            rgba(123, 53, 219, 0.07);
+
+      --glass-bg:         rgba(255,255,255,0.62);
+      --glass-bg-h:       rgba(255,255,255,0.82);
+      --glass-border:     rgba(255,255,255,0.88);
+      --glass-border-h:   rgba(255,255,255,0.98);
+      --glass-hi:         rgba(255,255,255,0.95);
+      --glass-shadow:     0 4px 24px rgba(60,80,140,0.09), 0 1px 2px rgba(60,80,140,0.05), inset 0 1px 0 rgba(255,255,255,0.92);
+      --glass-shadow-h:   0 20px 60px rgba(60,80,140,0.15), inset 0 1px 0 rgba(255,255,255,0.98);
+
+      --text:             #0c1424;
+      --text-2:           #2b4066;
+      --text-muted:       #647fa0;
+      --divider:          rgba(0,0,50,0.07);
+
+      --green:            #009950;
+      --green-dim:        rgba(0,153,80,0.10);
+      --green-glow:       rgba(0,153,80,0.18);
+      --green-border:     rgba(0,153,80,0.30);
+      --blue:             #1a5fd4;
+      --purple:           #7120d0;
+      --orange:           #b86800;
+      --red:              #cc2222;
+
+      --badge-bg:         rgba(0,153,80,0.09);
+      --badge-border:     rgba(0,153,80,0.28);
+
+      --terminal-bg:      rgba(10, 14, 28, 0.88);
+      --terminal-bar:     rgba(0,0,0,0.08);
+    }
+
+    /* CSS variable workaround for light theme — we use a class too */
+    .light-vars {
+      --bg:               #f3f6ff;
+      --bg-2:             #eaeffe;
+      --orb-1:            rgba(0, 168, 84, 0.10);
+      --orb-2:            rgba(29, 95, 217, 0.09);
+      --orb-3:            rgba(123, 53, 219, 0.07);
+      --glass-bg:         rgba(255,255,255,0.62);
+      --glass-bg-h:       rgba(255,255,255,0.82);
+      --glass-border:     rgba(255,255,255,0.88);
+      --glass-border-h:   rgba(255,255,255,0.98);
+      --glass-hi:         rgba(255,255,255,0.95);
+      --glass-shadow:     0 4px 24px rgba(60,80,140,0.09), 0 1px 2px rgba(60,80,140,0.05), inset 0 1px 0 rgba(255,255,255,0.92);
+      --glass-shadow-h:   0 20px 60px rgba(60,80,140,0.15), inset 0 1px 0 rgba(255,255,255,0.98);
+      --text:             #0c1424;
+      --text-2:           #2b4066;
+      --text-muted:       #647fa0;
+      --divider:          rgba(0,0,50,0.07);
+      --green:            #009950;
+      --green-dim:        rgba(0,153,80,0.10);
+      --green-glow:       rgba(0,153,80,0.18);
+      --green-border:     rgba(0,153,80,0.30);
+      --blue:             #1a5fd4;
+      --purple:           #7120d0;
+      --orange:           #b86800;
+      --red:              #cc2222;
+      --badge-bg:         rgba(0,153,80,0.09);
+      --badge-border:     rgba(0,153,80,0.28);
+      --terminal-bg:      rgba(10, 14, 28, 0.88);
+      --terminal-bar:     rgba(0,0,0,0.08);
+    }
+
+    /* ── Page base ────────────────────────────────────── */
     body {
       font-family: var(--font);
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
-      overflow-x: hidden;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
-    a { color: var(--blue); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    code { font-family: var(--mono); font-size: 0.88em; color: var(--text-2); }
+    /* ── Grain overlay ────────────────────────────────── */
+    .grain {
+      position: fixed; inset: 0;
+      z-index: 999; pointer-events: none;
+      opacity: 0.022;
+      background-image: url("data:image/svg+xml,<svg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      background-size: 160px;
+    }
 
-    /* ── Layout ──────────────────────────────────────── */
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 24px;
+    /* ── Mesh background ──────────────────────────────── */
+    .mesh {
+      position: absolute; inset: 0;
+      overflow: hidden; pointer-events: none;
+      z-index: 0;
     }
-    section { padding: 96px 0; }
-
-    /* ── Navigation ──────────────────────────────────── */
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(13,17,23,0.88);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border-muted);
-    }
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 60px;
-    }
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: var(--text);
-      text-decoration: none;
-      letter-spacing: -0.01em;
-    }
-    .nav-logo:hover { text-decoration: none; opacity: 0.8; }
-    .nav-links { display: flex; align-items: center; gap: 8px; }
-
-    /* ── Buttons ─────────────────────────────────────── */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 8px 16px;
-      border-radius: var(--r);
-      font-family: var(--font);
-      font-size: 0.875rem;
-      font-weight: 500;
-      cursor: pointer;
-      border: none;
-      transition: all 0.15s ease;
-      text-decoration: none;
-      white-space: nowrap;
-    }
-    .btn:hover { text-decoration: none; }
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-2);
-      border: 1px solid var(--border);
-    }
-    .btn-ghost:hover { background: var(--bg-card); color: var(--text); }
-    .btn-primary {
-      background: var(--green);
-      color: #0d1117;
-      font-weight: 600;
-    }
-    .btn-primary:hover {
-      background: #46d157;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 16px rgba(63,185,80,0.35);
-    }
-    .btn-outline {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .btn-outline:hover { background: var(--bg-card); border-color: var(--text-muted); }
-
-    /* ── Hero ────────────────────────────────────────── */
-    .hero {
-      padding: 112px 0 96px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    /* Radial glow behind hero */
-    .hero::before {
-      content: '';
+    .orb {
       position: absolute;
-      top: -160px; left: 50%;
-      transform: translateX(-50%);
-      width: 900px; height: 700px;
-      background: radial-gradient(ellipse at center, rgba(63,185,80,0.07) 0%, transparent 68%);
-      pointer-events: none;
-    }
-    /* Subtle dot-grid texture */
-    .hero::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle, #21262d 1px, transparent 1px);
-      background-size: 28px 28px;
-      opacity: 0.35;
-      pointer-events: none;
-    }
-    .hero > .container { position: relative; z-index: 1; }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 4px 14px;
-      background: var(--green-glow);
-      border: 1px solid var(--green-border);
-      border-radius: 100px;
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: var(--green);
-      margin-bottom: 28px;
-      letter-spacing: 0.03em;
-    }
-    .hero-badge-dot {
-      width: 6px; height: 6px;
       border-radius: 50%;
-      background: var(--green);
-      animation: pulse 2.4s ease-in-out infinite;
+      filter: blur(80px);
+      animation: drift 12s ease-in-out infinite;
     }
-    @keyframes pulse {
-      0%,100% { opacity: 1; transform: scale(1); }
-      50%      { opacity: 0.5; transform: scale(0.8); }
-    }
+    .orb-1 { width: 700px; height: 700px; background: var(--orb-1); top: -200px; left: -150px; animation-delay: 0s; }
+    .orb-2 { width: 500px; height: 500px; background: var(--orb-2); top: -100px; right: -100px; animation-delay: -4s; }
+    .orb-3 { width: 400px; height: 400px; background: var(--orb-3); bottom: -100px; left: 40%; animation-delay: -7s; }
 
-    h1 {
-      font-size: clamp(2.2rem, 5vw, 3.8rem);
-      font-weight: 800;
-      line-height: 1.12;
-      letter-spacing: -0.03em;
-      margin-bottom: 20px;
-      background: linear-gradient(160deg, #e6edf3 40%, #768390 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    @keyframes drift {
+      0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+      33%       { transform: translateY(-30px) translateX(20px) scale(1.04); }
+      66%       { transform: translateY(15px) translateX(-15px) scale(0.97); }
     }
-    .hero-sub {
-      font-size: clamp(1rem, 2vw, 1.18rem);
-      color: var(--text-muted);
-      max-width: 560px;
-      margin: 0 auto 40px;
-      line-height: 1.75;
-    }
-
-    /* Install command box */
-    .install-box {
-      display: inline-flex;
-      align-items: stretch;
-      background: var(--bg-subtle);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      overflow: hidden;
-      margin-bottom: 32px;
-      max-width: calc(100vw - 48px);
-    }
-    .install-cmd {
-      padding: 13px 20px;
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .install-cmd .dollar { color: var(--text-muted); margin-right: 8px; user-select: none; }
-    .copy-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 0 16px;
-      border: none;
-      border-left: 1px solid var(--border);
-      background: transparent;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.15s;
-      font-size: 0.8rem;
-      font-family: var(--font);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .copy-btn:hover { background: var(--bg-card); color: var(--text); }
-    .copy-btn.copied { color: var(--green); }
-
-    .hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    .hero-version {
-      margin-top: 18px;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      font-family: var(--mono);
-    }
-    .hero-version span {
-      background: var(--bg-card);
-      border: 1px solid var(--border-muted);
-      border-radius: 4px;
-      padding: 1px 7px;
-      color: var(--text-2);
-    }
-
-    /* ── Stats strip ─────────────────────────────────── */
-    .stats {
-      padding: 0;
-      border-top: 1px solid var(--border-muted);
-      border-bottom: 1px solid var(--border-muted);
-      background: var(--bg-subtle);
-    }
-    .stats-inner {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-    }
-    .stat-item {
-      padding: 28px 20px;
-      text-align: center;
-      border-right: 1px solid var(--border-muted);
-    }
-    .stat-item:last-child { border-right: none; }
-    .stat-value {
-      font-size: 2rem;
-      font-weight: 800;
-      color: var(--green);
-      line-height: 1;
-      margin-bottom: 5px;
-      font-family: var(--mono);
-    }
-    .stat-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-    }
-
-    /* ── Section headers ─────────────────────────────── */
-    .section-header { text-align: center; margin-bottom: 56px; }
-    .section-tag {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--green);
-      text-transform: uppercase;
-      letter-spacing: 0.13em;
-      margin-bottom: 12px;
-    }
-    .section-header h2 {
-      font-size: clamp(1.6rem, 3vw, 2.4rem);
-      font-weight: 700;
-      letter-spacing: -0.025em;
-      margin-bottom: 12px;
-    }
-    .section-header p {
-      font-size: 1.05rem;
-      color: var(--text-muted);
-      max-width: 500px;
-      margin: 0 auto;
-    }
-
-    /* ── Features ────────────────────────────────────── */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-    .feature-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-muted);
-      border-radius: var(--r-lg);
-      padding: 28px;
-      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-    }
-    .feature-card:hover {
-      border-color: var(--green-border);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-    }
-    .feature-icon { font-size: 1.9rem; margin-bottom: 14px; display: block; }
-    .feature-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
-    .feature-card p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.7; }
-
-    /* ── Ecosystems ──────────────────────────────────── */
-    .ecosystems-section { background: var(--bg-subtle); }
-    .ecosystems-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 16px;
-    }
-    .ecosystem-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-muted);
-      border-radius: var(--r-lg);
-      padding: 24px 18px;
-      text-align: center;
-      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-    }
-    .ecosystem-card:hover {
-      border-color: var(--green-border);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    }
-    .eco-icon { font-size: 2.2rem; margin-bottom: 10px; display: block; }
-    .eco-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 12px; }
-    .eco-files { list-style: none; display: flex; flex-direction: column; gap: 4px; }
-    .eco-files li {
-      font-family: var(--mono);
-      font-size: 0.68rem;
-      color: var(--text-muted);
-      background: var(--bg-subtle);
-      border-radius: 4px;
-      padding: 3px 6px;
-    }
-
-    /* ── Terminal ────────────────────────────────────── */
-    .terminal-wrap { max-width: 680px; margin: 0 auto; }
-    .terminal {
-      background: #010409;
-      border: 1px solid var(--border);
-      border-radius: var(--r-xl);
-      overflow: hidden;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(63,185,80,0.04);
-    }
-    .terminal-titlebar {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 12px 16px;
-      background: #161b22;
-      border-bottom: 1px solid var(--border-muted);
-    }
-    .t-dot { width: 12px; height: 12px; border-radius: 50%; }
-    .t-dot.r { background: #ff5f57; }
-    .t-dot.y { background: #febc2e; }
-    .t-dot.g { background: #28c840; }
-    .t-wintitle { margin-left: 6px; font-size: 0.75rem; color: var(--text-muted); font-family: var(--mono); }
-    .terminal-body {
-      padding: 20px 24px;
-      font-family: var(--mono);
-      font-size: 0.8rem;
-      line-height: 1.75;
-    }
-    .t-line { display: block; }
-    .t-blank { display: block; height: 0.5em; }
-    .t-prompt { color: var(--green); }
-    .t-cmd    { color: var(--text); }
-    .t-flag   { color: var(--blue); }
-    .t-arrow  { color: var(--blue); }
-    .t-num    { color: var(--orange); }
-    .t-pass   { color: var(--green); }
-    .t-warn   { color: var(--orange); }
-    .t-err    { color: var(--red); }
-    .t-dim    { color: var(--text-muted); }
-    .t-box    { color: #484f58; }
-    .t-label  { color: var(--text-2); }
-
-    /* ── Policy config ───────────────────────────────── */
-    .policy-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 56px;
-      align-items: center;
-    }
-    .policy-text h2 {
-      font-size: clamp(1.6rem, 3vw, 2.2rem);
-      font-weight: 700;
-      letter-spacing: -0.025em;
-      margin-bottom: 14px;
-    }
-    .policy-text p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      line-height: 1.75;
-      margin-bottom: 12px;
-    }
-    .policy-points { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-    .policy-points li {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 0.875rem;
-      color: var(--text-2);
-    }
-    .policy-points li::before { content: '→'; color: var(--green); flex-shrink: 0; }
-
-    .code-block {
-      background: #010409;
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      overflow: hidden;
-    }
-    .code-block-header {
-      display: flex;
-      align-items: center;
-      padding: 10px 16px;
-      background: var(--bg-subtle);
-      border-bottom: 1px solid var(--border-muted);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-family: var(--mono);
-      gap: 8px;
-    }
-    .code-block-header::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
-    .code-block pre { padding: 20px; overflow-x: auto; font-family: var(--mono); font-size: 0.8rem; line-height: 1.8; }
-    .tk-section { color: var(--orange); }
-    .tk-key     { color: var(--blue); }
-    .tk-pass    { color: var(--green); }
-    .tk-warn    { color: var(--orange); }
-    .tk-error   { color: var(--red); }
-    .tk-comment { color: #484f58; }
-    .tk-str     { color: #a5d6ff; }
-
-    /* ── How it works ────────────────────────────────── */
-    .steps-section { background: var(--bg-subtle); }
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 40px;
-      position: relative;
-    }
-    .steps-grid::before {
-      content: '';
-      position: absolute;
-      top: 27px;
-      left: calc(16.67% + 20px);
-      width: calc(66.67% - 40px);
-      height: 2px;
-      background: linear-gradient(to right, transparent, var(--border), transparent);
-    }
-    .step { text-align: center; position: relative; }
-    .step-num {
-      width: 54px; height: 54px;
-      border-radius: 50%;
-      background: var(--bg-card);
-      border: 2px solid var(--green);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--green);
-      margin: 0 auto 20px;
-      font-family: var(--mono);
-      position: relative;
-      z-index: 1;
-      box-shadow: 0 0 0 4px var(--bg-subtle);
-    }
-    .step h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; }
-    .step p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.7; }
-    .step-snippet {
-      display: inline-block;
-      margin-top: 12px;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--green);
-      background: rgba(63,185,80,0.1);
-      border: 1px solid rgba(63,185,80,0.2);
-      padding: 4px 12px;
-      border-radius: 6px;
-    }
-
-    /* ── Risk table ──────────────────────────────────── */
-    .risk-table-wrap { overflow-x: auto; }
-    .risk-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-    }
-    .risk-table th {
-      text-align: left;
-      padding: 10px 16px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      border-bottom: 1px solid var(--border-muted);
-    }
-    .risk-table td {
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border-muted);
-      vertical-align: top;
-    }
-    .risk-table tr:last-child td { border-bottom: none; }
-    .risk-table tr:hover td { background: var(--bg-card); }
-    .risk-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 3px 10px;
-      border-radius: 100px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .risk-badge.permissive { background: rgba(63,185,80,0.12);  color: var(--green);  border: 1px solid rgba(63,185,80,0.2); }
-    .risk-badge.weak       { background: rgba(227,179,65,0.12); color: var(--orange); border: 1px solid rgba(227,179,65,0.2); }
-    .risk-badge.strong     { background: rgba(244,112,103,0.12);color: var(--red);    border: 1px solid rgba(244,112,103,0.2); }
-    .risk-badge.prop       { background: rgba(88,166,255,0.1);  color: var(--blue);   border: 1px solid rgba(88,166,255,0.2); }
-    .risk-badge.unknown    { background: rgba(118,131,144,0.12);color: var(--text-muted); border: 1px solid rgba(118,131,144,0.2); }
-    .risk-examples { color: var(--text-muted); font-size: 0.82rem; font-family: var(--mono); }
-
-    /* ── CTA ─────────────────────────────────────────── */
-    .cta-section {
-      text-align: center;
-      border-top: 1px solid var(--border-muted);
-      position: relative;
-      overflow: hidden;
-    }
-    .cta-section::before {
-      content: '';
-      position: absolute;
-      bottom: -100px; left: 50%;
-      transform: translateX(-50%);
-      width: 600px; height: 400px;
-      background: radial-gradient(ellipse at center, rgba(63,185,80,0.06) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .cta-section > .container { position: relative; z-index: 1; }
-    .cta-section h2 {
-      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      margin-bottom: 12px;
-    }
-    .cta-section p { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 32px; }
-
-    /* ── Footer ──────────────────────────────────────── */
-    footer {
-      border-top: 1px solid var(--border-muted);
-      padding: 28px 0;
-    }
-    .footer-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-    .footer-left { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted); }
-    .footer-links { display: flex; gap: 20px; font-size: 0.82rem; }
-    .footer-links a { color: var(--text-muted); transition: color 0.15s; }
-    .footer-links a:hover { color: var(--text); text-decoration: none; }
-
-    /* ── Animations ──────────────────────────────────── */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(18px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-    .fade-in.visible { opacity: 1; transform: none; }
-
-    .stagger > * {
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
-    .stagger.visible > *:nth-child(1) { opacity:1; transform:none; transition-delay:0s;     }
-    .stagger.visible > *:nth-child(2) { opacity:1; transform:none; transition-delay:0.07s;  }
-    .stagger.visible > *:nth-child(3) { opacity:1; transform:none; transition-delay:0.14s;  }
-    .stagger.visible > *:nth-child(4) { opacity:1; transform:none; transition-delay:0.21s;  }
-    .stagger.visible > *:nth-child(5) { opacity:1; transform:none; transition-delay:0.28s;  }
-    .stagger.visible > *:nth-child(6) { opacity:1; transform:none; transition-delay:0.35s;  }
-
     @media (prefers-reduced-motion: reduce) {
+      .orb { animation: none; }
       .fade-in, .stagger > * { transition: none !important; opacity: 1 !important; transform: none !important; }
       .hero-badge-dot { animation: none; }
     }
 
-    /* ── Responsive ──────────────────────────────────── */
+    /* ── Glass mixin (applied as class) ──────────────────*/
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+    /* Inner top highlight */
+    .glass::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: var(--glass-hi);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .glass:hover {
+      background: var(--glass-bg-h);
+      border-color: var(--glass-border-h);
+      box-shadow: var(--glass-shadow-h);
+    }
+
+    /* ── Layout ───────────────────────────────────────── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 28px; }
+    section { padding: 100px 0; position: relative; }
+
+    /* ── Navigation ───────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      padding: 12px 0;
+    }
+    .nav-pill {
+      max-width: 1100px; margin: 0 auto; padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 52px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      border-radius: var(--r-2xl);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .nav-pill::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: var(--glass-hi); z-index: 1; pointer-events: none;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 9px;
+      font-weight: 700; font-size: 0.9rem;
+      color: var(--text); letter-spacing: -0.01em;
+    }
+    .nav-logo svg { color: var(--green); }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+
+    /* ── Buttons ──────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 16px; border-radius: var(--r-xl);
+      font-family: var(--font); font-size: 0.83rem; font-weight: 500;
+      cursor: pointer; border: none;
+      transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+      white-space: nowrap;
+    }
+    .btn-ghost {
+      background: transparent; color: var(--text-2);
+      border: 1px solid var(--glass-border);
+    }
+    .btn-ghost:hover {
+      background: var(--glass-bg-h); color: var(--text);
+      border-color: var(--glass-border-h);
+      transform: translateY(-1px);
+    }
+    .btn-primary {
+      background: var(--green); color: #021a0a; font-weight: 700;
+      box-shadow: 0 0 0 0 var(--green-glow);
+    }
+    .btn-primary:hover {
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px var(--green-glow);
+    }
+    .btn-outline {
+      background: var(--glass-bg); color: var(--text);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+    }
+    .btn-outline:hover {
+      background: var(--glass-bg-h); border-color: var(--glass-border-h);
+      transform: translateY(-1px);
+    }
+    .btn-icon {
+      width: 36px; height: 36px;
+      padding: 0; justify-content: center;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+    }
+    .btn-icon:hover {
+      background: var(--glass-bg-h);
+      transform: translateY(-1px) rotate(12deg);
+    }
+    /* Theme toggle icons */
+    .icon-sun  { display: none; }
+    .icon-moon { display: block; }
+
+    /* ── Hero ─────────────────────────────────────────── */
+    .hero {
+      padding: 120px 0 96px;
+      text-align: center;
+      position: relative;
+      min-height: 92vh;
+      display: flex; align-items: center;
+    }
+    .hero > .container { position: relative; z-index: 1; width: 100%; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 14px 5px 10px;
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      border-radius: 100px;
+      font-size: 0.76rem; font-weight: 600;
+      color: var(--green);
+      margin-bottom: 32px;
+      letter-spacing: 0.02em;
+    }
+    .hero-badge-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green-glow);
+      animation: pulse-dot 2.4s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { opacity: 1; box-shadow: 0 0 8px var(--green-glow); }
+      50%      { opacity: 0.5; box-shadow: 0 0 2px var(--green-glow); }
+    }
+
+    h1 {
+      font-size: clamp(2.6rem, 5.5vw, 4.4rem);
+      font-weight: 900; line-height: 1.08;
+      letter-spacing: -0.04em; margin-bottom: 22px;
+      background: linear-gradient(160deg, var(--text) 30%, var(--text-2) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-muted); max-width: 560px;
+      margin: 0 auto 40px; line-height: 1.75;
+    }
+
+    /* Install command glass box */
+    .install-wrap { margin-bottom: 32px; }
+    .install-box {
+      display: inline-flex; align-items: stretch;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+      box-shadow: var(--glass-shadow);
+      max-width: calc(100vw - 48px);
+      position: relative;
+    }
+    .install-box::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: var(--glass-hi); z-index: 1;
+    }
+    .install-cmd {
+      padding: 14px 22px;
+      font-family: var(--mono); font-size: 0.85rem;
+      color: var(--text); white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .install-cmd .dollar { color: var(--text-muted); margin-right: 9px; user-select: none; }
+    .copy-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 0 18px; border: none;
+      border-left: 1px solid var(--glass-border);
+      background: transparent; color: var(--text-muted);
+      cursor: pointer; transition: all 0.15s;
+      font-size: 0.78rem; font-family: var(--font); white-space: nowrap; flex-shrink: 0;
+    }
+    .copy-btn:hover { background: var(--glass-bg-h); color: var(--text); }
+    .copy-btn.copied { color: var(--green); }
+
+    .hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* ── Stats strip ──────────────────────────────────── */
+    .stats-wrap {
+      border-top: 1px solid var(--divider);
+      border-bottom: 1px solid var(--divider);
+    }
+    .stats-inner {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+    }
+    .stat-item {
+      padding: 32px 24px; text-align: center;
+      border-right: 1px solid var(--divider);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-value {
+      font-size: 2.4rem; font-weight: 900;
+      color: var(--green); line-height: 1; margin-bottom: 5px;
+      font-family: var(--mono);
+      text-shadow: 0 0 30px var(--green-glow);
+    }
+    .stat-label {
+      font-size: 0.73rem; color: var(--text-muted); font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.09em;
+    }
+
+    /* ── Section header ───────────────────────────────── */
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-tag {
+      display: inline-block; font-size: 0.72rem; font-weight: 700;
+      color: var(--green); text-transform: uppercase; letter-spacing: 0.14em;
+      margin-bottom: 14px;
+    }
+    .section-header h2 {
+      font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+      font-weight: 800; letter-spacing: -0.03em; margin-bottom: 14px;
+    }
+    .section-header p { font-size: 1.05rem; color: var(--text-muted); max-width: 500px; margin: 0 auto; }
+
+    /* ── Features ─────────────────────────────────────── */
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .feature-card {
+      border-radius: var(--r-xl); padding: 30px 28px;
+      cursor: default;
+    }
+    .feature-card:hover { transform: translateY(-4px); }
+    /* Gradient border effect */
+    .feature-card::after {
+      content: ''; position: absolute; inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(135deg, rgba(0,210,106,0.15) 0%, rgba(77,166,255,0.10) 50%, rgba(168,85,247,0.08) 100%);
+      opacity: 0; transition: opacity 0.3s;
+      pointer-events: none; z-index: 0;
+    }
+    .feature-card:hover::after { opacity: 1; }
+    .feature-card > * { position: relative; z-index: 1; }
+
+    .feature-icon {
+      font-size: 2rem; margin-bottom: 16px; display: block;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
+    }
+    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 9px; }
+    .feature-card p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.72; }
+    .feature-card code {
+      font-size: 0.82em; color: var(--text-2);
+      background: var(--glass-bg); padding: 1px 5px;
+      border-radius: 4px; border: 1px solid var(--glass-border);
+    }
+
+    /* ── Ecosystems ───────────────────────────────────── */
+    .eco-section { background: var(--bg-2); }
+    .eco-section-inner { position: relative; }
+    .ecosystems-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+    .eco-card {
+      border-radius: var(--r-xl); padding: 26px 18px; text-align: center;
+    }
+    .eco-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--green-border) !important;
+      box-shadow: var(--glass-shadow-h), 0 0 0 1px var(--green-border) !important;
+    }
+    .eco-icon { font-size: 2.4rem; margin-bottom: 12px; display: block; }
+    .eco-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 14px; }
+    .eco-files { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .eco-files li {
+      font-family: var(--mono); font-size: 0.68rem; color: var(--text-muted);
+      background: var(--glass-bg); border-radius: 6px;
+      padding: 3px 8px; border: 1px solid var(--divider);
+    }
+
+    /* ── Terminal ─────────────────────────────────────── */
+    .terminal-wrap { max-width: 700px; margin: 0 auto; }
+    .terminal {
+      background: var(--terminal-bg);
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-2xl);
+      overflow: hidden;
+      box-shadow:
+        0 32px 80px rgba(0,0,0,0.45),
+        0 0 0 1px rgba(0,210,106,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.07);
+    }
+    .terminal-bar {
+      display: flex; align-items: center; gap: 7px;
+      padding: 14px 18px;
+      background: var(--terminal-bar);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .t-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .t-dot.r { background: #ff5f57; box-shadow: 0 0 6px rgba(255,95,87,0.5); }
+    .t-dot.y { background: #febc2e; box-shadow: 0 0 6px rgba(254,188,46,0.5); }
+    .t-dot.g { background: #28c840; box-shadow: 0 0 6px rgba(40,200,64,0.5); }
+    .t-title { margin-left: 6px; font-size: 0.74rem; color: var(--text-muted); font-family: var(--mono); }
+    .terminal-body { padding: 22px 26px; font-family: var(--mono); font-size: 0.8rem; line-height: 1.78; }
+    .tl { display: block; }
+    .tb { display: block; height: 0.55em; }
+    .t-p  { color: var(--green); text-shadow: 0 0 12px var(--green-glow); }
+    .t-c  { color: var(--text); }
+    .t-f  { color: var(--blue); }
+    .t-a  { color: var(--blue); }
+    .t-n  { color: var(--orange); }
+    .t-ok { color: var(--green); }
+    .t-wn { color: var(--orange); }
+    .t-er { color: var(--red); }
+    .t-m  { color: var(--text-muted); }
+    .t-bx { color: #3a4a5c; }
+    .t-lb { color: var(--text-2); }
+
+    /* ── Policy / code block ──────────────────────────── */
+    .policy-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .policy-text h2 {
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      font-weight: 800; letter-spacing: -0.03em; margin-bottom: 16px;
+    }
+    .policy-text p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.8; margin-bottom: 14px; }
+    .policy-points { list-style: none; display: flex; flex-direction: column; gap: 11px; margin-top: 22px; }
+    .policy-points li {
+      display: flex; align-items: flex-start; gap: 11px;
+      font-size: 0.875rem; color: var(--text-2);
+    }
+    .policy-points li::before { content: '→'; color: var(--green); flex-shrink: 0; }
+    .policy-points code {
+      font-size: 0.82em; background: var(--glass-bg);
+      border: 1px solid var(--glass-border); padding: 1px 5px;
+      border-radius: 4px; color: var(--text-2);
+    }
+
+    .code-block {
+      background: var(--terminal-bg);
+      backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-xl); overflow: hidden;
+      box-shadow: var(--glass-shadow);
+    }
+    .code-block-hdr {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 18px;
+      background: var(--terminal-bar);
+      border-bottom: 1px solid var(--glass-border);
+      font-size: 0.74rem; color: var(--text-muted); font-family: var(--mono);
+    }
+    .code-block-hdr::before {
+      content: ''; width: 9px; height: 9px; border-radius: 50%;
+      background: var(--orange); flex-shrink: 0;
+      box-shadow: 0 0 6px rgba(255,179,64,0.5);
+    }
+    .code-block pre { padding: 22px; overflow-x: auto; font-family: var(--mono); font-size: 0.79rem; line-height: 1.82; }
+    .tk-s { color: var(--orange); } /* section */
+    .tk-k { color: var(--blue); }   /* key */
+    .tk-p { color: var(--green); }  /* pass */
+    .tk-w { color: var(--orange); } /* warn */
+    .tk-e { color: var(--red); }    /* error */
+    .tk-c { color: var(--text-muted); opacity: 0.55; } /* comment */
+    .tk-q { color: var(--blue); opacity: 0.8; } /* quoted string */
+
+    /* ── Risk table ───────────────────────────────────── */
+    .risk-table-outer { border-radius: var(--r-xl); overflow: hidden; }
+    .risk-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .risk-table th {
+      text-align: left; padding: 12px 20px;
+      font-size: 0.71rem; font-weight: 700;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.09em;
+      background: var(--glass-bg); border-bottom: 1px solid var(--divider);
+    }
+    .risk-table td {
+      padding: 16px 20px; border-bottom: 1px solid var(--divider);
+      vertical-align: middle; background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+    }
+    .risk-table tr:last-child td { border-bottom: none; }
+    .risk-table tr:hover td { background: var(--glass-bg-h); }
+    .risk-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 100px;
+      font-size: 0.77rem; font-weight: 600; white-space: nowrap;
+    }
+    .rb-green  { background: var(--green-dim);              color: var(--green);  border: 1px solid var(--green-border); }
+    .rb-orange { background: rgba(255,179,64,0.10);         color: var(--orange); border: 1px solid rgba(255,179,64,0.25); }
+    .rb-red    { background: rgba(255,87,87,0.10);          color: var(--red);    border: 1px solid rgba(255,87,87,0.25); }
+    .rb-blue   { background: rgba(77,166,255,0.10);         color: var(--blue);   border: 1px solid rgba(77,166,255,0.25); }
+    .rb-muted  { background: rgba(130,150,175,0.10);        color: var(--text-muted); border: 1px solid rgba(130,150,175,0.2); }
+    .risk-eg   { font-family: var(--mono); font-size: 0.79rem; color: var(--text-muted); }
+
+    /* ── Steps ────────────────────────────────────────── */
+    .steps-section { background: var(--bg-2); }
+    .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; position: relative; }
+    .steps-grid::before {
+      content: ''; position: absolute;
+      top: 29px; left: calc(16.67% + 24px);
+      width: calc(66.66% - 48px); height: 1px;
+      background: linear-gradient(to right, transparent, var(--divider), transparent);
+    }
+    .step { text-align: center; position: relative; }
+    .step-num {
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+      border: 2px solid var(--green-border);
+      box-shadow: 0 0 20px var(--green-dim), var(--glass-shadow);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; font-weight: 800; color: var(--green);
+      margin: 0 auto 22px; font-family: var(--mono);
+      position: relative; z-index: 1;
+    }
+    .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 9px; }
+    .step p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.72; }
+    .step code { font-size: 0.82em; color: var(--text-2); }
+    .step-snip {
+      display: inline-block; margin-top: 14px;
+      font-family: var(--mono); font-size: 0.76rem; color: var(--green);
+      background: var(--green-dim); border: 1px solid var(--green-border);
+      padding: 5px 14px; border-radius: 8px;
+      box-shadow: 0 0 12px var(--green-dim);
+    }
+
+    /* ── CTA ──────────────────────────────────────────── */
+    .cta-section { text-align: center; border-top: 1px solid var(--divider); }
+    .cta-section h2 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 900; letter-spacing: -0.04em; margin-bottom: 14px;
+    }
+    .cta-section p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 36px; }
+    .cta-box {
+      display: inline-flex; align-items: stretch;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border); border-radius: var(--r-xl);
+      box-shadow: var(--glass-shadow); overflow: hidden;
+      margin-bottom: 28px; max-width: calc(100vw - 48px); position: relative;
+    }
+    .cta-box::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: var(--glass-hi); z-index: 1;
+    }
+    .cta-box-text {
+      padding: 14px 22px; font-family: var(--mono); font-size: 0.84rem;
+      color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .cta-box-text .dollar { color: var(--text-muted); margin-right: 9px; user-select: none; }
+
+    /* ── Footer ───────────────────────────────────────── */
+    footer { border-top: 1px solid var(--divider); padding: 28px 0; }
+    .footer-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .footer-left { display: flex; align-items: center; gap: 8px; font-size: 0.83rem; color: var(--text-muted); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-size: 0.81rem; color: var(--text-muted); transition: color 0.15s; }
+    .footer-links a:hover { color: var(--text); }
+
+    /* ── Animations ───────────────────────────────────── */
+    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .fade-in.visible { opacity: 1; transform: none; }
+    .stagger > * { opacity: 0; transform: translateY(18px); transition: opacity 0.42s ease, transform 0.42s ease; }
+    .stagger.visible > *:nth-child(1) { opacity:1; transform:none; transition-delay:0s;     }
+    .stagger.visible > *:nth-child(2) { opacity:1; transform:none; transition-delay:0.08s;  }
+    .stagger.visible > *:nth-child(3) { opacity:1; transform:none; transition-delay:0.16s;  }
+    .stagger.visible > *:nth-child(4) { opacity:1; transform:none; transition-delay:0.24s;  }
+    .stagger.visible > *:nth-child(5) { opacity:1; transform:none; transition-delay:0.32s;  }
+    .stagger.visible > *:nth-child(6) { opacity:1; transform:none; transition-delay:0.40s;  }
+
+    /* ── Responsive ───────────────────────────────────── */
     @media (max-width: 960px) {
       .features-grid      { grid-template-columns: repeat(2, 1fr); }
       .ecosystems-grid    { grid-template-columns: repeat(3, 1fr); }
       .policy-layout      { grid-template-columns: 1fr; }
-      .steps-grid         { grid-template-columns: 1fr; gap: 36px; }
+      .steps-grid         { grid-template-columns: 1fr; gap: 40px; }
       .steps-grid::before { display: none; }
     }
     @media (max-width: 640px) {
-      .features-grid   { grid-template-columns: 1fr; }
-      .ecosystems-grid { grid-template-columns: repeat(2, 1fr); }
-      .stats-inner     { grid-template-columns: repeat(2, 1fr); }
+      .features-grid      { grid-template-columns: 1fr; }
+      .ecosystems-grid    { grid-template-columns: repeat(2, 1fr); }
+      .stats-inner        { grid-template-columns: repeat(2, 1fr); }
       .stat-item:nth-child(2) { border-right: none; }
-      .stat-item:nth-child(3) { border-top: 1px solid var(--border-muted); }
-      .stat-item:nth-child(4) { border-top: 1px solid var(--border-muted); }
-      .footer-inner    { flex-direction: column; text-align: center; }
-      nav .btn-ghost   { display: none; }
-      section          { padding: 64px 0; }
+      .stat-item:nth-child(3), .stat-item:nth-child(4) { border-top: 1px solid var(--divider); }
+      .footer-inner       { flex-direction: column; text-align: center; }
+      nav .btn-ghost      { display: none; }
+      section             { padding: 72px 0; }
     }
-    @media (max-width: 480px) {
-      .install-cmd { font-size: 0.72rem; padding: 13px 14px; }
+
+    /* ── Light mode icon logic ────────────────────────── */
+    @media (prefers-color-scheme: light) {
+      html:not([data-theme="dark"]) .icon-sun  { display: none; }
+      html:not([data-theme="dark"]) .icon-moon { display: block; }
     }
+    html[data-theme="light"] .icon-sun  { display: none; }
+    html[data-theme="light"] .icon-moon { display: block; }
+    html[data-theme="dark"]  .icon-sun  { display: block; }
+    html[data-theme="dark"]  .icon-moon { display: none; }
+
+    /* Section alt bg */
+    .alt-bg { background: var(--bg-2); }
   </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════ NAV ══════════════════════════════════ -->
+<!-- Grain texture -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ════════════════════ NAVIGATION ════════════════════ -->
 <nav>
-  <div class="container nav-inner">
+  <div class="nav-pill">
     <a href="#" class="nav-logo">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       license-checkr
     </a>
     <div class="nav-links">
-      <a href="https://github.com/QuentinRob/license-checkr/releases" class="btn btn-ghost">Releases</a>
-      <a href="https://github.com/QuentinRob/license-checkr" class="btn btn-ghost">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      <a href="https://github.com/QuentinRob/license-checkr/releases" class="btn btn-ghost" style="font-size:0.8rem;">Releases</a>
+      <a href="https://github.com/QuentinRob/license-checkr" class="btn btn-ghost" style="font-size:0.8rem;">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
         GitHub
       </a>
+      <button class="btn btn-icon" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle colour theme">
+        <!-- Sun — click to go light -->
+        <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <!-- Moon — click to go dark -->
+        <svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
     </div>
   </div>
 </nav>
 
-<!-- ═══════════════════════════════ HERO ═════════════════════════════════ -->
+<!-- ════════════════════ HERO ════════════════════════ -->
 <section class="hero">
+  <div class="mesh">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
   <div class="container">
     <div class="hero-badge">
       <div class="hero-badge-dot"></div>
@@ -676,21 +748,20 @@
       Scan your entire dependency tree, classify licenses using SPDX standards,
       and enforce your policy — before a license becomes a legal problem.
     </p>
-    <div>
+    <div class="install-wrap">
       <div class="install-box">
         <div class="install-cmd">
-          <span class="dollar">$</span
-          ><span id="install-text">cargo install --git https://github.com/QuentinRob/license-checkr</span>
+          <span class="dollar">$</span><span id="install-text">cargo install --git https://github.com/QuentinRob/license-checkr</span>
         </div>
         <button class="copy-btn" id="copy-btn" onclick="copyInstall()">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"/></svg>
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"/></svg>
           <span id="copy-label">Copy</span>
         </button>
       </div>
     </div>
     <div class="hero-ctas">
-      <a href="#get-started" class="btn btn-primary">Get Started →</a>
-      <a href="https://github.com/QuentinRob/license-checkr" class="btn btn-outline">
+      <a href="#get-started" class="btn btn-primary" style="padding:12px 24px;font-size:0.93rem;">Get Started →</a>
+      <a href="https://github.com/QuentinRob/license-checkr" class="btn btn-outline" style="padding:12px 24px;font-size:0.93rem;">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
         View on GitHub
       </a>
@@ -698,31 +769,17 @@
   </div>
 </section>
 
-<!-- ═══════════════════════════════ STATS ════════════════════════════════ -->
-<div class="stats">
-  <div class="container">
-    <div class="stats-inner fade-in">
-      <div class="stat-item">
-        <div class="stat-value">5</div>
-        <div class="stat-label">Ecosystems</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value">10+</div>
-        <div class="stat-label">Manifest formats</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value">3</div>
-        <div class="stat-label">Report formats</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value">0</div>
-        <div class="stat-label">Config required</div>
-      </div>
-    </div>
+<!-- ════════════════════ STATS ═══════════════════════ -->
+<div class="stats-wrap">
+  <div class="stats-inner fade-in">
+    <div class="stat-item"><div class="stat-value">5</div><div class="stat-label">Ecosystems</div></div>
+    <div class="stat-item"><div class="stat-value">10+</div><div class="stat-label">Manifest formats</div></div>
+    <div class="stat-item"><div class="stat-value">3</div><div class="stat-label">Report formats</div></div>
+    <div class="stat-item"><div class="stat-value">0</div><div class="stat-label">Config required</div></div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════ FEATURES ═════════════════════════════ -->
+<!-- ════════════════════ FEATURES ════════════════════ -->
 <section>
   <div class="container">
     <div class="section-header fade-in">
@@ -731,98 +788,63 @@
       <p>From a quick local check to a full CI enforcement pipeline.</p>
     </div>
     <div class="features-grid stagger">
-      <div class="feature-card">
+      <div class="feature-card glass" style="border-radius:var(--r-xl)">
         <span class="feature-icon">🔎</span>
         <h3>Zero-config Detection</h3>
         <p>Drop <code>license-checkr</code> into any project. It automatically detects your ecosystem from manifest files and starts scanning — no setup required.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card glass" style="border-radius:var(--r-xl)">
         <span class="feature-icon">📡</span>
         <h3>Online Registry Enrichment</h3>
-        <p>Missing license data? Use <code>--online</code> to fetch it in parallel from crates.io, PyPI, Maven Central, and npm. Results are batched for speed.</p>
+        <p>Missing license data? Use <code>--online</code> to fetch it in parallel from crates.io, PyPI, Maven Central, and npm. Batched for speed.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card glass" style="border-radius:var(--r-xl)">
         <span class="feature-icon">⚖️</span>
         <h3>Flexible Policy Engine</h3>
-        <p>Define <code>pass</code>, <code>warn</code>, and <code>error</code> rules per SPDX identifier in a simple TOML file. Sensible defaults are included out of the box.</p>
+        <p>Define <code>pass</code>, <code>warn</code>, and <code>error</code> rules per SPDX identifier in a simple TOML file. Sensible defaults are built in.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card glass" style="border-radius:var(--r-xl)">
         <span class="feature-icon">🏷️</span>
         <h3>Full SPDX Support</h3>
-        <p>Normalizes 20+ common strings to SPDX identifiers. Correctly evaluates <code>MIT OR Apache-2.0</code> (most permissive wins) and <code>MIT AND GPL-3.0</code> (most restrictive wins).</p>
+        <p>Normalizes 20+ common strings to SPDX identifiers. Evaluates <code>MIT OR Apache-2.0</code> (most permissive wins) and <code>MIT AND GPL-3.0</code> (most restrictive wins).</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card glass" style="border-radius:var(--r-xl)">
         <span class="feature-icon">📊</span>
         <h3>Three Output Formats</h3>
-        <p>Colored terminal table for local development, structured JSON for automated pipelines, or a polished multi-page PDF to share with your legal team.</p>
+        <p>Colored terminal table for local development, structured JSON for pipelines, or a polished multi-page PDF to share with your legal team.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card glass" style="border-radius:var(--r-xl)">
         <span class="feature-icon">🚦</span>
         <h3>CI-First Design</h3>
-        <p>Exits with code <code>1</code> when a policy violation is found. Combine <code>--quiet</code> with your favorite CI pipeline for clean, automated enforcement.</p>
+        <p>Exits with code <code>1</code> when a policy violation is found. Combine with <code>--quiet</code> for clean, zero-noise CI output.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════════ ECOSYSTEMS ═══════════════════════════ -->
-<section class="ecosystems-section">
-  <div class="container">
+<!-- ════════════════════ ECOSYSTEMS ══════════════════ -->
+<section class="alt-bg" style="position:relative;overflow:hidden;">
+  <div class="mesh" style="opacity:0.6">
+    <div class="orb" style="width:400px;height:400px;background:var(--orb-2);top:-100px;right:-50px;animation-delay:-2s;filter:blur(100px);"></div>
+    <div class="orb" style="width:300px;height:300px;background:var(--orb-3);bottom:-50px;left:10%;animation-delay:-6s;filter:blur(90px);"></div>
+  </div>
+  <div class="container" style="position:relative;z-index:1">
     <div class="section-header fade-in">
       <div class="section-tag">Ecosystem support</div>
       <h2>Your whole stack, covered</h2>
-      <p>One tool for every language in your monorepo. Ecosystems are detected automatically.</p>
+      <p>One tool for every language in your monorepo. Detected automatically — no flags needed.</p>
     </div>
     <div class="ecosystems-grid stagger">
-      <div class="ecosystem-card">
-        <span class="eco-icon">🦀</span>
-        <div class="eco-name">Rust</div>
-        <ul class="eco-files">
-          <li>Cargo.lock</li>
-          <li>Cargo.toml</li>
-        </ul>
-      </div>
-      <div class="ecosystem-card">
-        <span class="eco-icon">🐍</span>
-        <div class="eco-name">Python</div>
-        <ul class="eco-files">
-          <li>Pipfile.lock</li>
-          <li>requirements.txt</li>
-          <li>pyproject.toml</li>
-        </ul>
-      </div>
-      <div class="ecosystem-card">
-        <span class="eco-icon">☕</span>
-        <div class="eco-name">Java</div>
-        <ul class="eco-files">
-          <li>pom.xml</li>
-          <li>build.gradle(.kts)</li>
-          <li>gradle.lockfile</li>
-        </ul>
-      </div>
-      <div class="ecosystem-card">
-        <span class="eco-icon">🟢</span>
-        <div class="eco-name">Node.js</div>
-        <ul class="eco-files">
-          <li>package-lock.json</li>
-          <li>yarn.lock</li>
-          <li>package.json</li>
-        </ul>
-      </div>
-      <div class="ecosystem-card">
-        <span class="eco-icon">🔷</span>
-        <div class="eco-name">.NET</div>
-        <ul class="eco-files">
-          <li>*.csproj / *.fsproj</li>
-          <li>packages.config</li>
-          <li>paket.lock</li>
-        </ul>
-      </div>
+      <div class="eco-card glass"><span class="eco-icon">🦀</span><div class="eco-name">Rust</div><ul class="eco-files"><li>Cargo.lock</li><li>Cargo.toml</li></ul></div>
+      <div class="eco-card glass"><span class="eco-icon">🐍</span><div class="eco-name">Python</div><ul class="eco-files"><li>Pipfile.lock</li><li>requirements.txt</li><li>pyproject.toml</li></ul></div>
+      <div class="eco-card glass"><span class="eco-icon">☕</span><div class="eco-name">Java</div><ul class="eco-files"><li>pom.xml</li><li>build.gradle(.kts)</li><li>gradle.lockfile</li></ul></div>
+      <div class="eco-card glass"><span class="eco-icon">🟢</span><div class="eco-name">Node.js</div><ul class="eco-files"><li>package-lock.json</li><li>yarn.lock</li><li>package.json</li></ul></div>
+      <div class="eco-card glass"><span class="eco-icon">🔷</span><div class="eco-name">.NET</div><ul class="eco-files"><li>*.csproj / *.fsproj</li><li>packages.config</li><li>paket.lock</li></ul></div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════════ DEMO ═════════════════════════════════ -->
+<!-- ════════════════════ TERMINAL DEMO ═══════════════ -->
 <section>
   <div class="container">
     <div class="section-header fade-in">
@@ -832,126 +854,117 @@
     </div>
     <div class="terminal-wrap fade-in">
       <div class="terminal">
-        <div class="terminal-titlebar">
-          <div class="t-dot r"></div>
-          <div class="t-dot y"></div>
-          <div class="t-dot g"></div>
-          <span class="t-wintitle">license-checkr</span>
+        <div class="terminal-bar">
+          <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
+          <span class="t-title">license-checkr</span>
         </div>
         <div class="terminal-body">
-<span class="t-line"><span class="t-prompt">❯</span> <span class="t-cmd">license-checkr</span> <span class="t-flag">--online</span></span>
-<span class="t-blank"></span>
-<span class="t-line">  <span class="t-arrow">→</span> Rust    <span class="t-num">42</span> <span class="t-dim">dependencies</span></span>
-<span class="t-line">  <span class="t-arrow">→</span> Node    <span class="t-num">87</span> <span class="t-dim">dependencies</span></span>
-<span class="t-line">  <span class="t-arrow">→</span> Python  <span class="t-num">23</span> <span class="t-dim">dependencies</span></span>
-<span class="t-blank"></span>
-<span class="t-line"><span class="t-box"> ┌──────────────────────────────────────────────────────┐</span></span>
-<span class="t-line"><span class="t-box"> │  </span><span class="t-label">SUMMARY</span><span class="t-box">                                             │</span></span>
-<span class="t-line"><span class="t-box"> │  </span><span class="t-dim">Scanned   :</span><span class="t-label">  /home/user/my-app                      </span><span class="t-box">│</span></span>
-<span class="t-line"><span class="t-box"> │  </span><span class="t-dim">Total     :</span><span class="t-label">  152                                   </span><span class="t-box">│</span></span>
-<span class="t-line"><span class="t-box"> │  </span><span class="t-pass">✓  Pass   </span><span class="t-dim">:  </span><span class="t-num">138</span><span class="t-dim">  MIT (82), Apache-2.0 (41) …    </span><span class="t-box">│</span></span>
-<span class="t-line"><span class="t-box"> │  </span><span class="t-warn">⚠  Warn   </span><span class="t-dim">:   </span><span class="t-num">11</span><span class="t-dim">  unknown (8), LGPL-2.1 (3)       </span><span class="t-box">│</span></span>
-<span class="t-line"><span class="t-box"> │  </span><span class="t-err">✗  Error  </span><span class="t-dim">:    </span><span class="t-num">3</span><span class="t-dim">  GPL-3.0 (3)                     </span><span class="t-box">│</span></span>
-<span class="t-line"><span class="t-box"> └──────────────────────────────────────────────────────┘</span></span>
+<span class="tl"><span class="t-p">❯</span> <span class="t-c">license-checkr</span> <span class="t-f">--online</span></span>
+<span class="tb"></span>
+<span class="tl">  <span class="t-a">→</span> Rust    <span class="t-n">42</span> <span class="t-m">dependencies</span></span>
+<span class="tl">  <span class="t-a">→</span> Node    <span class="t-n">87</span> <span class="t-m">dependencies</span></span>
+<span class="tl">  <span class="t-a">→</span> Python  <span class="t-n">23</span> <span class="t-m">dependencies</span></span>
+<span class="tb"></span>
+<span class="tl"><span class="t-bx"> ┌──────────────────────────────────────────────────────┐</span></span>
+<span class="tl"><span class="t-bx"> │  </span><span class="t-lb">SUMMARY</span><span class="t-bx">                                             │</span></span>
+<span class="tl"><span class="t-bx"> │  </span><span class="t-m">Scanned   : </span><span class="t-lb">/home/user/my-app                       </span><span class="t-bx">│</span></span>
+<span class="tl"><span class="t-bx"> │  </span><span class="t-m">Total     : </span><span class="t-lb">152                                    </span><span class="t-bx">│</span></span>
+<span class="tl"><span class="t-bx"> │  </span><span class="t-ok">✓  Pass   </span><span class="t-m">:  </span><span class="t-n">138</span><span class="t-m">  MIT (82), Apache-2.0 (41) …    </span><span class="t-bx">│</span></span>
+<span class="tl"><span class="t-bx"> │  </span><span class="t-wn">⚠  Warn   </span><span class="t-m">:   </span><span class="t-n">11</span><span class="t-m">  unknown (8), LGPL-2.1 (3)       </span><span class="t-bx">│</span></span>
+<span class="tl"><span class="t-bx"> │  </span><span class="t-er">✗  Error  </span><span class="t-m">:    </span><span class="t-n">3</span><span class="t-m">  GPL-3.0 (3)                     </span><span class="t-bx">│</span></span>
+<span class="tl"><span class="t-bx"> └──────────────────────────────────────────────────────┘</span></span>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════════ POLICY ═══════════════════════════════ -->
-<section>
-  <div class="container">
+<!-- ════════════════════ POLICY CONFIG ═══════════════ -->
+<section class="alt-bg" style="position:relative;overflow:hidden;">
+  <div class="mesh" style="opacity:0.5">
+    <div class="orb" style="width:500px;height:500px;background:var(--orb-1);top:-100px;left:-100px;animation-delay:-3s;filter:blur(110px);"></div>
+  </div>
+  <div class="container" style="position:relative;z-index:1">
     <div class="policy-layout">
       <div class="policy-text fade-in">
         <div class="section-tag">Policy engine</div>
         <h2>Your rules.<br>Your project.</h2>
-        <p>
-          Drop a <code>license-checkr.toml</code> at your project root and define
-          exactly which licenses are acceptable, which need review, and which are blocked.
-        </p>
-        <p>
-          No config file? Built-in defaults are already sensible — permissive licenses
-          pass, weak-copyleft warn, and GPL/AGPL are errors.
-        </p>
+        <p>Drop a <code style="font-size:0.88em;color:var(--text-2);background:var(--glass-bg);border:1px solid var(--glass-border);padding:2px 6px;border-radius:5px;">license-checkr.toml</code> at your project root and define exactly which licenses are acceptable, which need review, and which are blocked.</p>
+        <p>No config file? Built-in defaults are already sensible — permissive licenses pass, weak-copyleft warns, and GPL/AGPL are errors.</p>
         <ul class="policy-points">
           <li>Per-license rules keyed by SPDX identifier</li>
           <li>A catch-all <code>default</code> for anything unlisted</li>
           <li>Project-level or global <code>~/.config</code> config</li>
-          <li>Override with <code>--config &lt;path&gt;</code> at runtime</li>
+          <li>Override at runtime via <code>--config &lt;path&gt;</code></li>
         </ul>
       </div>
       <div class="fade-in">
         <div class="code-block">
-          <div class="code-block-header">license-checkr.toml</div>
+          <div class="code-block-hdr">license-checkr.toml</div>
           <pre>
-<span class="tk-comment"># Verdict for any license not listed below</span>
-<span class="tk-section">[policy]</span>
-<span class="tk-key">default</span> = <span class="tk-warn">"warn"</span>
+<span class="tk-c"># Verdict for any license not listed below</span>
+<span class="tk-s">[policy]</span>
+<span class="tk-k">default</span> = <span class="tk-w">"warn"</span>
 
-<span class="tk-section">[policy.licenses]</span>
-<span class="tk-comment"># Permissive — always allowed</span>
-<span class="tk-str">"MIT"</span>          = <span class="tk-pass">"pass"</span>
-<span class="tk-str">"Apache-2.0"</span>   = <span class="tk-pass">"pass"</span>
-<span class="tk-str">"BSD-3-Clause"</span> = <span class="tk-pass">"pass"</span>
-<span class="tk-str">"ISC"</span>          = <span class="tk-pass">"pass"</span>
-<span class="tk-str">"Unlicense"</span>    = <span class="tk-pass">"pass"</span>
+<span class="tk-s">[policy.licenses]</span>
+<span class="tk-c"># Permissive — always allowed</span>
+<span class="tk-q">"MIT"</span>          = <span class="tk-p">"pass"</span>
+<span class="tk-q">"Apache-2.0"</span>   = <span class="tk-p">"pass"</span>
+<span class="tk-q">"BSD-3-Clause"</span> = <span class="tk-p">"pass"</span>
+<span class="tk-q">"ISC"</span>          = <span class="tk-p">"pass"</span>
+<span class="tk-q">"Unlicense"</span>    = <span class="tk-p">"pass"</span>
 
-<span class="tk-comment"># Weak copyleft — review required</span>
-<span class="tk-str">"LGPL-2.1"</span>     = <span class="tk-warn">"warn"</span>
-<span class="tk-str">"MPL-2.0"</span>      = <span class="tk-warn">"warn"</span>
+<span class="tk-c"># Weak copyleft — review required</span>
+<span class="tk-q">"LGPL-2.1"</span>     = <span class="tk-w">"warn"</span>
+<span class="tk-q">"MPL-2.0"</span>      = <span class="tk-w">"warn"</span>
 
-<span class="tk-comment"># Strong copyleft — blocked</span>
-<span class="tk-str">"GPL-3.0"</span>      = <span class="tk-error">"error"</span>
-<span class="tk-str">"AGPL-3.0"</span>     = <span class="tk-error">"error"</span></pre>
+<span class="tk-c"># Strong copyleft — blocked</span>
+<span class="tk-q">"GPL-3.0"</span>      = <span class="tk-e">"error"</span>
+<span class="tk-q">"AGPL-3.0"</span>     = <span class="tk-e">"error"</span></pre>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════════ RISK TABLE ═══════════════════════════ -->
-<section class="ecosystems-section">
+<!-- ════════════════════ RISK TABLE ══════════════════ -->
+<section>
   <div class="container">
     <div class="section-header fade-in">
       <div class="section-tag">License risk levels</div>
       <h2>Understand your exposure at a glance</h2>
-      <p>license-checkr classifies every dependency into one of five risk levels.</p>
+      <p>Every dependency is classified into one of five risk levels.</p>
     </div>
-    <div class="risk-table-wrap fade-in">
+    <div class="risk-table-outer glass fade-in">
       <table class="risk-table">
         <thead>
-          <tr>
-            <th>Risk level</th>
-            <th>What it means</th>
-            <th>Example licenses</th>
-          </tr>
+          <tr><th>Risk level</th><th>What it means</th><th>Examples</th></tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="risk-badge permissive">✅ Permissive</span></td>
-            <td>Minimal restrictions. Use freely in any project, commercial or otherwise.</td>
-            <td class="risk-examples">MIT, Apache-2.0, BSD-3-Clause, ISC, Unlicense, CC0-1.0</td>
+            <td><span class="risk-badge rb-green">✅ Permissive</span></td>
+            <td>Minimal restrictions — use freely in any project, commercial or otherwise.</td>
+            <td class="risk-eg">MIT, Apache-2.0, BSD-3-Clause, ISC, Unlicense, CC0-1.0</td>
           </tr>
           <tr>
-            <td><span class="risk-badge weak">⚠️ Weak Copyleft</span></td>
-            <td>Share-alike requirements apply only to modifications of the library itself.</td>
-            <td class="risk-examples">LGPL-2.1, LGPL-3.0, MPL-2.0, EPL-2.0, CDDL-1.0</td>
+            <td><span class="risk-badge rb-orange">⚠️ Weak Copyleft</span></td>
+            <td>Share-alike applies only to modifications of the library itself.</td>
+            <td class="risk-eg">LGPL-2.1, LGPL-3.0, MPL-2.0, EPL-2.0, CDDL-1.0</td>
           </tr>
           <tr>
-            <td><span class="risk-badge strong">🔴 Strong Copyleft</span></td>
-            <td>Any project that uses this dependency may need to be released as open source.</td>
-            <td class="risk-examples">GPL-2.0, GPL-3.0, AGPL-3.0, EUPL-1.1</td>
+            <td><span class="risk-badge rb-red">🔴 Strong Copyleft</span></td>
+            <td>Your project may need to be released as open source if you use this.</td>
+            <td class="risk-eg">GPL-2.0, GPL-3.0, AGPL-3.0, EUPL-1.1</td>
           </tr>
           <tr>
-            <td><span class="risk-badge prop">🔒 Proprietary</span></td>
-            <td>Source is closed. A commercial agreement is required for use.</td>
-            <td class="risk-examples">"proprietary", "commercial", "All rights reserved"</td>
+            <td><span class="risk-badge rb-blue">🔒 Proprietary</span></td>
+            <td>Source is closed; a commercial agreement is required for use.</td>
+            <td class="risk-eg">"proprietary", "commercial", "All rights reserved"</td>
           </tr>
           <tr>
-            <td><span class="risk-badge unknown">❓ Unknown</span></td>
-            <td>License could not be determined. Use <code>--online</code> to try to resolve it.</td>
-            <td class="risk-examples">Missing, empty, or unrecognized license strings</td>
+            <td><span class="risk-badge rb-muted">❓ Unknown</span></td>
+            <td>License could not be determined. Use <code style="font-size:0.82em">--online</code> to try to resolve it.</td>
+            <td class="risk-eg">Missing, empty, or unrecognized strings</td>
           </tr>
         </tbody>
       </table>
@@ -959,9 +972,13 @@
   </div>
 </section>
 
-<!-- ═══════════════════════════════ HOW IT WORKS ════════════════════════ -->
-<section class="steps-section" id="get-started">
-  <div class="container">
+<!-- ════════════════════ HOW IT WORKS ════════════════ -->
+<section class="steps-section alt-bg" id="get-started" style="position:relative;overflow:hidden;">
+  <div class="mesh" style="opacity:0.45">
+    <div class="orb" style="width:450px;height:450px;background:var(--orb-2);bottom:-100px;right:-50px;animation-delay:-5s;filter:blur(100px);"></div>
+    <div class="orb" style="width:350px;height:350px;background:var(--orb-1);top:-50px;left:30%;animation-delay:-1s;filter:blur(90px);"></div>
+  </div>
+  <div class="container" style="position:relative;z-index:1">
     <div class="section-header fade-in">
       <div class="section-tag">How it works</div>
       <h2>Three steps to compliance</h2>
@@ -970,54 +987,56 @@
       <div class="step">
         <div class="step-num">1</div>
         <h3>Install</h3>
-        <p>A single binary, no runtime dependencies. Install globally or add to your CI environment in seconds.</p>
-        <code class="step-snippet">cargo install license-checkr</code>
+        <p>A single static binary with no runtime dependencies. Install globally or drop into your CI environment.</p>
+        <code class="step-snip">cargo install license-checkr</code>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <h3>Scan</h3>
-        <p>Run at the root of any project. Ecosystems are detected automatically. Add <code>--online</code> to resolve missing licenses from registries.</p>
-        <code class="step-snippet">license-checkr --online</code>
+        <p>Run at the root of any project. Ecosystems are detected automatically. Add <code>--online</code> to resolve missing licenses.</p>
+        <code class="step-snip">license-checkr --online</code>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <h3>Enforce</h3>
-        <p>Add to your CI pipeline. Exits <code>1</code> on policy violations so you can block merges before problematic licenses sneak in.</p>
-        <code class="step-snippet">license-checkr -q</code>
+        <p>Plug into your CI pipeline. Exits <code>1</code> on policy violations — blocking merges before problematic licenses sneak in.</p>
+        <code class="step-snip">license-checkr -q</code>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════════ CTA ══════════════════════════════════ -->
-<section class="cta-section">
-  <div class="container">
+<!-- ════════════════════ CTA ═════════════════════════ -->
+<section class="cta-section" style="position:relative;overflow:hidden;">
+  <div class="mesh">
+    <div class="orb orb-1" style="opacity:0.7;bottom:-200px;top:auto;"></div>
+    <div class="orb orb-2" style="opacity:0.5;top:-100px;left:auto;right:-100px;"></div>
+  </div>
+  <div class="container" style="position:relative;z-index:1">
     <h2>Start in 30 seconds</h2>
     <p>No accounts. No config files. No surprises.</p>
-    <div style="display:inline-flex;align-items:stretch;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin-bottom:28px;max-width:calc(100vw - 48px);">
-      <div style="padding:13px 20px;font-family:var(--mono);font-size:0.82rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-        <span style="color:var(--text-muted);margin-right:8px;user-select:none;">$</span>cargo install --git https://github.com/QuentinRob/license-checkr
+    <div>
+      <div class="cta-box">
+        <div class="cta-box-text"><span class="dollar">$</span>cargo install --git https://github.com/QuentinRob/license-checkr</div>
       </div>
     </div>
-    <div>
-      <a href="https://github.com/QuentinRob/license-checkr" class="btn btn-primary" style="font-size:1rem;padding:12px 28px;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-        View on GitHub
-      </a>
-    </div>
+    <a href="https://github.com/QuentinRob/license-checkr" class="btn btn-primary" style="font-size:1rem;padding:14px 32px;">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      View on GitHub
+    </a>
   </div>
 </section>
 
-<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<!-- ════════════════════ FOOTER ══════════════════════ -->
 <footer>
   <div class="container">
     <div class="footer-inner">
       <div class="footer-left">
         <span>🔍</span>
         <span>license-checkr</span>
-        <span style="opacity:.4">·</span>
+        <span style="opacity:.35">·</span>
         <span>MIT License</span>
-        <span style="opacity:.4">·</span>
+        <span style="opacity:.35">·</span>
         <span>Built with 🦀 Rust</span>
       </div>
       <div class="footer-links">
@@ -1031,22 +1050,54 @@
 </footer>
 
 <script>
+  // ── Theme ─────────────────────────────────────────────
+  (function () {
+    const saved = localStorage.getItem('lc-theme');
+    if (saved) document.documentElement.dataset.theme = saved;
+    // Apply light-vars class for the CSS variable workaround
+    applyThemeClass();
+  })();
+
+  function applyThemeClass() {
+    const html = document.documentElement;
+    const isLight =
+      html.dataset.theme === 'light' ||
+      (!html.dataset.theme && window.matchMedia('(prefers-color-scheme: light)').matches);
+    html.classList.toggle('light-vars', isLight);
+  }
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isCurrentlyLight =
+      html.dataset.theme === 'light' ||
+      (!html.dataset.theme && window.matchMedia('(prefers-color-scheme: light)').matches);
+    const next = isCurrentlyLight ? 'dark' : 'light';
+    html.dataset.theme = next;
+    localStorage.setItem('lc-theme', next);
+    applyThemeClass();
+  }
+
+  // Re-apply when system preference changes (and no override is set)
+  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+    if (!document.documentElement.dataset.theme) applyThemeClass();
+  });
+
   // ── Copy install command ──────────────────────────────
   function copyInstall() {
     const text = document.getElementById('install-text').textContent.trim();
     navigator.clipboard.writeText(text).then(() => {
       const btn = document.getElementById('copy-btn');
-      const label = document.getElementById('copy-label');
+      const lbl = document.getElementById('copy-label');
       btn.classList.add('copied');
-      label.textContent = 'Copied!';
-      setTimeout(() => { btn.classList.remove('copied'); label.textContent = 'Copy'; }, 2200);
+      lbl.textContent = 'Copied!';
+      setTimeout(() => { btn.classList.remove('copied'); lbl.textContent = 'Copy'; }, 2200);
     }).catch(() => {});
   }
 
-  // ── Scroll-triggered animations ──────────────────────
+  // ── Scroll animations ─────────────────────────────────
   const observer = new IntersectionObserver(
     entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
-    { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+    { threshold: 0.07, rootMargin: '0px 0px -40px 0px' }
   );
   document.querySelectorAll('.fade-in, .stagger').forEach(el => observer.observe(el));
 </script>
