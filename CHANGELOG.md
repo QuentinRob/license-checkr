@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.4] — 2026-02-26
+
+### Changed
+- README: logo image removed from the header; document now starts directly
+  with the title heading (#42)
+- CI: `x86_64-apple-darwin` (Intel Mac) build target and its associated
+  `brew install pkg-config fontconfig` step dropped from the release
+  workflow; only the `aarch64-apple-darwin` (Apple Silicon) target is
+  retained (#41)
+
+---
+
 ## [0.1.3] — 2026-02-26
 
 ### Added
@@ -122,6 +134,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.github/workflows/ci.yml` — runs `cargo test` + `cargo clippy` on push/PR to `main`
 - 19 unit tests covering all parsers, SPDX classifier, normalizer, and Maven POM extraction
 
+[0.1.4]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.4
 [0.1.3]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.3
 [0.1.2]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.2
 [0.1.1]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.1
