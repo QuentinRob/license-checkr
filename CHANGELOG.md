@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.6] — 2026-02-26
+
+### Fixed
+- Workspace scan progress output was interleaved: dependency count lines
+  appeared grouped under whichever project's `tokio::spawn` task printed its
+  "→ scanning" header last, instead of under their own project line (#47)
+- All inline `println!`/`eprintln!` calls removed from inside spawned tasks;
+  scan summaries are now printed in deterministic discovery order after
+  `join_all` completes, grouping each project's ecosystem dep counts directly
+  below its own header (#47)
+
+---
+
 ## [0.1.5] — 2026-02-26
 
 ### Added
@@ -165,6 +178,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.github/workflows/ci.yml` — runs `cargo test` + `cargo clippy` on push/PR to `main`
 - 19 unit tests covering all parsers, SPDX classifier, normalizer, and Maven POM extraction
 
+[0.1.6]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.6
 [0.1.5]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.5
 [0.1.4]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.4
 [0.1.3]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.3

@@ -154,7 +154,6 @@ async fn run_workspace(
         .map(|proj_path| {
             let excluded = excluded.to_vec();
             let online = cli.online;
-            let quiet = cli.quiet;
             let config_override = cli.config.clone();
 
             tokio::spawn(async move {
@@ -164,13 +163,10 @@ async fn run_workspace(
                     .unwrap_or("unknown")
                     .to_string();
 
-                if !quiet {
-                    println!(" {} scanning {}  ({})", "→".cyan(), name.bold(), proj_path.display());
-                }
-
                 let proj_config = load_config(&proj_path, config_override.as_deref())?;
+                // Always suppress inline prints — output is flushed in order after join_all.
                 let mut deps =
-                    scan_project(&proj_path, &proj_config, &excluded, online, quiet).await?;
+                    scan_project(&proj_path, &proj_config, &excluded, online, true).await?;
 
                 for dep in &mut deps {
                     let license = dep
@@ -203,6 +199,28 @@ async fn run_workspace(
     if projects.is_empty() {
         eprintln!("No dependencies found in any sub-project.");
         return Ok(false);
+    }
+
+    // Print scan summaries in deterministic order now that all tasks have finished.
+    if !cli.quiet {
+        for project in &projects {
+            println!(
+                " {} scanning {}  ({})",
+                "→".cyan(),
+                project.name.bold(),
+                project.path.display()
+            );
+            // Group dep counts by ecosystem.
+            let mut eco_counts: std::collections::BTreeMap<String, usize> =
+                std::collections::BTreeMap::new();
+            for dep in &project.deps {
+                *eco_counts.entry(dep.ecosystem.to_string()).or_insert(0) += 1;
+            }
+            for (eco, count) in &eco_counts {
+                eprintln!("    {} {} {} dependencies", "·".dimmed(), eco, count);
+            }
+        }
+        println!();
     }
 
     match report_format {
