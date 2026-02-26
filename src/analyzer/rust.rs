@@ -19,6 +19,49 @@ struct CargoLockPackage {
     source: Option<String>,
 }
 
+#[derive(Debug, Deserialize)]
+struct CrateManifest {
+    package: Option<CratePackage>,
+}
+
+#[derive(Debug, Deserialize)]
+struct CratePackage {
+    license: Option<String>,
+}
+
+/// Look up the `license` field for a crate from the local Cargo registry cache.
+///
+/// Cargo stores downloaded crate sources at:
+/// `$CARGO_HOME/registry/src/<registry-hash>/<name>-<version>/Cargo.toml`
+///
+/// Returns `None` if the crate is not cached locally or has no `license` field.
+fn license_from_cargo_cache(name: &str, version: &str) -> Option<String> {
+    let cargo_home = std::env::var_os("CARGO_HOME")
+        .map(std::path::PathBuf::from)
+        .or_else(|| dirs::home_dir().map(|h| h.join(".cargo")))?;
+
+    let registry_src = cargo_home.join("registry").join("src");
+    let crate_dir_name = format!("{}-{}", name, version);
+
+    // registry/src contains one subdirectory per registry host
+    // (e.g. `index.crates.io-6f17d22bba15001f`).
+    for entry in std::fs::read_dir(&registry_src).ok()?.flatten() {
+        let cargo_toml = entry.path().join(&crate_dir_name).join("Cargo.toml");
+        if !cargo_toml.exists() {
+            continue;
+        }
+        if let Ok(content) = std::fs::read_to_string(&cargo_toml) {
+            if let Ok(manifest) = toml::from_str::<CrateManifest>(&content) {
+                if let Some(license) = manifest.package.and_then(|p| p.license) {
+                    return Some(license);
+                }
+            }
+        }
+    }
+
+    None
+}
+
 /// Analyzer for Rust projects managed by Cargo.
 ///
 /// Parses `Cargo.lock` and returns all external crate dependencies,
@@ -47,15 +90,23 @@ impl super::Analyzer for RustAnalyzer {
             .into_iter()
             // Skip local workspace members (they have no `source`)
             .filter(|p| p.source.is_some())
-            .map(|p| Dependency {
-                name: p.name,
-                version: p.version,
-                ecosystem: Ecosystem::Rust,
-                license_raw: None,
-                license_spdx: None,
-                risk: LicenseRisk::Unknown,
-                verdict: PolicyVerdict::Warn,
-                source: LicenseSource::Unknown,
+            .map(|p| {
+                let license = license_from_cargo_cache(&p.name, &p.version);
+                let source = if license.is_some() {
+                    LicenseSource::Cache
+                } else {
+                    LicenseSource::Unknown
+                };
+                Dependency {
+                    name: p.name,
+                    version: p.version,
+                    ecosystem: Ecosystem::Rust,
+                    license_spdx: license.clone(),
+                    license_raw: license,
+                    risk: LicenseRisk::Unknown,
+                    verdict: PolicyVerdict::Warn,
+                    source,
+                }
             })
             .collect();
 

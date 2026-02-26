@@ -103,6 +103,8 @@ pub enum LicenseSource {
     Manifest,
     /// Fetched from the upstream package registry via `--online`.
     Registry,
+    /// Read from the local package manager cache (e.g. `~/.cargo/registry/src/…/Cargo.toml`).
+    Cache,
     /// Source is undetermined (offline scan with no license in manifest).
     Unknown,
 }
@@ -112,6 +114,7 @@ impl std::fmt::Display for LicenseSource {
         match self {
             LicenseSource::Manifest => write!(f, "manifest"),
             LicenseSource::Registry => write!(f, "registry"),
+            LicenseSource::Cache => write!(f, "cache"),
             LicenseSource::Unknown => write!(f, "unknown"),
         }
     }
