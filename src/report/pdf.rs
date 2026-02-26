@@ -7,7 +7,7 @@ use printpdf::{
 };
 use printpdf::path::{PaintMode, WindingOrder};
 
-use crate::models::{Dependency, LicenseRisk, PolicyVerdict};
+use crate::models::{Dependency, LicenseRisk, PolicyVerdict, ProjectScan};
 
 const PAGE_W: f32 = 210.0;
 const PAGE_H: f32 = 297.0;
@@ -70,14 +70,198 @@ pub fn render(deps: &[Dependency], project_path: &Path, output_path: &Path) -> R
     let doc = PdfDocument::empty("License Report");
 
     add_cover_page(&doc, deps, project_name)?;
-    add_risk_summary_page(&doc, deps)?;
-    add_table_pages(&doc, deps)?;
+    add_risk_summary_page(&doc, deps, None)?;
+    add_table_pages(&doc, deps, None)?;
 
     let bytes = doc.save_to_bytes()?;
     std::fs::write(output_path, &bytes)
         .with_context(|| format!("Failed to write PDF to {}", output_path.display()))?;
 
     println!("PDF report written to: {}", output_path.display());
+    Ok(())
+}
+
+/// Render a workspace PDF: workspace cover → per-project Risk Summary + Dependency Table.
+pub fn render_workspace(projects: &[ProjectScan], output_path: &Path) -> Result<()> {
+    let doc = PdfDocument::empty("License Report — Workspace");
+
+    add_workspace_cover_page(&doc, projects)?;
+
+    for proj in projects {
+        add_risk_summary_page(&doc, &proj.deps, Some(&proj.name))?;
+        add_table_pages(&doc, &proj.deps, Some(&proj.name))?;
+    }
+
+    let bytes = doc.save_to_bytes()?;
+    std::fs::write(output_path, &bytes)
+        .with_context(|| format!("Failed to write PDF to {}", output_path.display()))?;
+
+    println!("PDF workspace report written to: {}", output_path.display());
+    Ok(())
+}
+
+// ── Workspace cover page ──────────────────────────────────────────────────────
+
+fn add_workspace_cover_page(doc: &PdfDocumentReference, projects: &[ProjectScan]) -> Result<()> {
+    let (page_idx, layer_idx) = doc.add_page(Mm(PAGE_W), Mm(PAGE_H), "Cover");
+    let layer = doc.get_page(page_idx).get_layer(layer_idx);
+
+    let font_b = doc.add_builtin_font(BuiltinFont::HelveticaBold)?;
+    let font_r = doc.add_builtin_font(BuiltinFont::Helvetica)?;
+
+    let all_deps: Vec<&Dependency> = projects.iter().flat_map(|p| &p.deps).collect();
+    let pass  = all_deps.iter().filter(|d| d.verdict == PolicyVerdict::Pass).count();
+    let warn  = all_deps.iter().filter(|d| d.verdict == PolicyVerdict::Warn).count();
+    let error = all_deps.iter().filter(|d| d.verdict == PolicyVerdict::Error).count();
+
+    // Background + gradient header
+    fill_rect(&layer, 0.0, 0.0, PAGE_W, PAGE_H, BG);
+    let hdr_bot = PAGE_H - COVER_HDR_H;
+    fill_gradient_h(&layer, 0.0, hdr_bot, PAGE_W, COVER_HDR_H, ACCENT_BLU, ACCENT_PUR, 28);
+
+    set_color(&layer, WHITE_DIM);
+    layer.use_text(
+        format!("license-checkr v{}", env!("CARGO_PKG_VERSION")),
+        7.5, Mm(PAGE_W - MARGIN - 44.0), Mm(PAGE_H - 10.5), &font_r,
+    );
+
+    set_color(&layer, WHITE);
+    layer.use_text("License Compliance", 28.0, Mm(MARGIN), Mm(PAGE_H - 26.0), &font_b);
+    set_color(&layer, WHITE_DIM);
+    layer.use_text("Workspace Report", 28.0, Mm(MARGIN), Mm(PAGE_H - 41.0), &font_b);
+
+    // Workspace chip
+    let chip_y = hdr_bot - 18.0;
+    let chip_h = 12.0f32;
+    let chip_w = 106.0f32;
+    fill_rounded_rect(&layer, MARGIN, chip_y, chip_w, chip_h, R_BADGE, PANEL);
+    stroke_rounded_rect(&layer, MARGIN, chip_y, chip_w, chip_h, R_BADGE, PANEL_BORDER);
+    fill_rect(&layer, MARGIN, chip_y, 2.5, chip_h, ACCENT_PUR);
+
+    set_color(&layer, TEXT_MUT);
+    layer.use_text("WORKSPACE", 6.0, Mm(MARGIN + 5.0), Mm(chip_y + chip_h - 3.8), &font_b);
+    set_color(&layer, TEXT_PRI);
+    layer.use_text(
+        format!("{} sub-project{}", projects.len(), if projects.len() == 1 { "" } else { "s" }),
+        9.5, Mm(MARGIN + 5.0), Mm(chip_y + 2.8), &font_b,
+    );
+
+    // Scan date
+    set_color(&layer, TEXT_SEC);
+    layer.use_text(
+        format!("Scanned  {}", chrono_now()),
+        9.0, Mm(MARGIN), Mm(chip_y - 8.0), &font_r,
+    );
+
+    // Divider + OVERVIEW
+    let rule_y = chip_y - 16.5;
+    draw_hline(&layer, MARGIN, PAGE_W - MARGIN, rule_y, PANEL_BORDER);
+    set_color(&layer, TEXT_MUT);
+    layer.use_text("OVERVIEW", 6.5, Mm(MARGIN), Mm(rule_y - 7.0), &font_b);
+
+    // Stat cards
+    let card_y  = rule_y - 42.0;
+    let card_h  = 26.0f32;
+    let gap     = 4.0f32;
+    let total_w = T_END - MARGIN;
+    let card_w  = (total_w - gap * 3.0) / 4.0;
+
+    let cards: [(&str, String, (f32, f32, f32)); 4] = [
+        ("TOTAL",  all_deps.len().to_string(), ACCENT_BLU),
+        ("PASS",   pass.to_string(),           PASS_FG),
+        ("WARN",   warn.to_string(),           WARN_FG),
+        ("ERROR",  error.to_string(),          ERR_FG),
+    ];
+
+    for (i, (label, value, accent)) in cards.iter().enumerate() {
+        let cx = MARGIN + (card_w + gap) * i as f32;
+        draw_stat_card(&layer, cx, card_y, card_w, card_h, label, value, *accent,
+                       &font_r, &font_b);
+    }
+
+    // Projects scanned table
+    let section_y = card_y - 13.0;
+    draw_hline(&layer, MARGIN, PAGE_W - MARGIN, section_y, PANEL_BORDER);
+    set_color(&layer, TEXT_MUT);
+    layer.use_text("PROJECTS SCANNED", 6.5, Mm(MARGIN), Mm(section_y - 7.5), &font_b);
+
+    // Table header
+    let tbl_hdr_y = section_y - 14.0;
+    let col_proj = MARGIN + 2.0;
+    let col_tot  = MARGIN + 88.0;
+    let col_pass = MARGIN + 106.0;
+    let col_warn = MARGIN + 124.0;
+    let col_err  = MARGIN + 143.0;
+
+    set_color(&layer, TEXT_MUT);
+    layer.use_text("PROJECT", 6.5, Mm(col_proj), Mm(tbl_hdr_y), &font_b);
+    layer.use_text("TOTAL",   6.5, Mm(col_tot),  Mm(tbl_hdr_y), &font_b);
+    layer.use_text("PASS",    6.5, Mm(col_pass), Mm(tbl_hdr_y), &font_b);
+    layer.use_text("WARN",    6.5, Mm(col_warn), Mm(tbl_hdr_y), &font_b);
+    layer.use_text("ERROR",   6.5, Mm(col_err),  Mm(tbl_hdr_y), &font_b);
+    draw_hline(&layer, MARGIN, PAGE_W - MARGIN, tbl_hdr_y - 2.0, PANEL_BORDER);
+
+    const MAX_ROWS: usize = 12;
+    let show = projects.len().min(MAX_ROWS);
+
+    for (i, proj) in projects.iter().take(show).enumerate() {
+        let row_y = tbl_hdr_y - 7.5 - i as f32 * 6.5;
+        let p_total = proj.deps.len();
+        let p_pass = proj.deps.iter().filter(|d| d.verdict == PolicyVerdict::Pass).count();
+        let p_warn = proj.deps.iter().filter(|d| d.verdict == PolicyVerdict::Warn).count();
+        let p_err  = proj.deps.iter().filter(|d| d.verdict == PolicyVerdict::Error).count();
+
+        if i % 2 == 0 {
+            fill_rect(&layer, MARGIN, row_y - 1.5, T_END - MARGIN, 6.5, PANEL_ALT);
+        }
+
+        set_color(&layer, TEXT_PRI);
+        layer.use_text(truncate(&proj.name, 32), 8.0, Mm(col_proj), Mm(row_y), &font_r);
+        set_color(&layer, TEXT_SEC);
+        layer.use_text(p_total.to_string(), 8.0, Mm(col_tot),  Mm(row_y), &font_r);
+        layer.use_text(p_pass.to_string(),  8.0, Mm(col_pass), Mm(row_y), &font_r);
+        layer.use_text(p_warn.to_string(),  8.0, Mm(col_warn), Mm(row_y), &font_r);
+
+        if p_err > 0 {
+            fill_rounded_rect(&layer, col_err - 0.5, row_y - 1.2, 14.0, 4.5, R_BADGE, ERR_BG);
+            set_color(&layer, ERR_FG);
+            layer.use_text(p_err.to_string(), 8.0, Mm(col_err + 1.0), Mm(row_y), &font_b);
+        } else {
+            set_color(&layer, TEXT_MUT);
+            layer.use_text("0", 8.0, Mm(col_err), Mm(row_y), &font_r);
+        }
+    }
+
+    if projects.len() > MAX_ROWS {
+        let more_y = tbl_hdr_y - 7.5 - show as f32 * 6.5;
+        set_color(&layer, TEXT_MUT);
+        layer.use_text(
+            format!("+ {} more…", projects.len() - MAX_ROWS),
+            7.5, Mm(col_proj), Mm(more_y), &font_r,
+        );
+    }
+
+    // What's in this report — compact bullet
+    let bullet_y = tbl_hdr_y - 7.5 - (show.min(MAX_ROWS) as f32 + 1.0) * 6.5 - 4.0;
+    draw_hline(&layer, MARGIN, PAGE_W - MARGIN, bullet_y, PANEL_BORDER);
+    set_color(&layer, TEXT_MUT);
+    layer.use_text("WHAT'S IN THIS REPORT", 6.5, Mm(MARGIN), Mm(bullet_y - 7.5), &font_b);
+    fill_rounded_rect(&layer, MARGIN, bullet_y - 14.5, 2.0, 2.0, 1.0, ACCENT_PUR);
+    set_color(&layer, TEXT_SEC);
+    layer.use_text(
+        "For each project: Risk Summary + Dependency Table",
+        8.0, Mm(MARGIN + 5.0), Mm(bullet_y - 14.5), &font_r,
+    );
+
+    // Footer
+    draw_hline(&layer, MARGIN, PAGE_W - MARGIN, 22.0, PANEL_BORDER);
+    set_color(&layer, TEXT_MUT);
+    layer.use_text(
+        format!("Generated by license-checkr v{}", env!("CARGO_PKG_VERSION")),
+        7.5, Mm(MARGIN), Mm(15.0), &font_r,
+    );
+    layer.use_text(chrono_now(), 7.5, Mm(PAGE_W - MARGIN - 22.0), Mm(15.0), &font_r);
+
     Ok(())
 }
 
@@ -242,7 +426,11 @@ struct RenderedRow {
     height: f32,
 }
 
-fn add_risk_summary_page(doc: &PdfDocumentReference, deps: &[Dependency]) -> Result<()> {
+fn add_risk_summary_page(
+    doc: &PdfDocumentReference,
+    deps: &[Dependency],
+    project_label: Option<&str>,
+) -> Result<()> {
     let (page_idx, layer_idx) = doc.add_page(Mm(PAGE_W), Mm(PAGE_H), "Risk Summary");
     let layer = doc.get_page(page_idx).get_layer(layer_idx);
 
@@ -315,7 +503,11 @@ fn add_risk_summary_page(doc: &PdfDocumentReference, deps: &[Dependency]) -> Res
 
     // Page header
     set_color(&layer, TEXT_PRI);
-    layer.use_text("Risk Summary", 20.0, Mm(MARGIN), Mm(278.5), &font_b);
+    let heading = match project_label {
+        Some(name) => format!("Risk Summary — {}", name),
+        None => "Risk Summary".to_string(),
+    };
+    layer.use_text(truncate(&heading, 44), 20.0, Mm(MARGIN), Mm(278.5), &font_b);
     set_color(&layer, TEXT_SEC);
     layer.use_text(
         "All dependencies grouped by license risk level",
@@ -396,7 +588,11 @@ fn add_risk_summary_page(doc: &PdfDocumentReference, deps: &[Dependency]) -> Res
 
 // ── Full dependency table pages ───────────────────────────────────────────────
 
-fn add_table_pages(doc: &PdfDocumentReference, deps: &[Dependency]) -> Result<()> {
+fn add_table_pages(
+    doc: &PdfDocumentReference,
+    deps: &[Dependency],
+    project_label: Option<&str>,
+) -> Result<()> {
     let font_b = doc.add_builtin_font(BuiltinFont::HelveticaBold)?;
     let font_r = doc.add_builtin_font(BuiltinFont::Helvetica)?;
 
@@ -442,7 +638,11 @@ fn add_table_pages(doc: &PdfDocumentReference, deps: &[Dependency]) -> Result<()
             fill_gradient_h(&layer, 0.0, PAGE_H - 2.5, PAGE_W, 2.5, ACCENT_BLU, ACCENT_PUR, 21);
 
             set_color(&layer, TEXT_PRI);
-            layer.use_text("All Dependencies", 14.0, Mm(MARGIN), Mm(282.5), &font_b);
+            let deps_heading = match project_label {
+                Some(name) => format!("All Dependencies — {}", name),
+                None => "All Dependencies".to_string(),
+            };
+            layer.use_text(truncate(&deps_heading, 46), 14.0, Mm(MARGIN), Mm(282.5), &font_b);
             set_color(&layer, TEXT_MUT);
             layer.use_text(
                 format!("Page {}", page_num),

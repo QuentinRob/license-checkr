@@ -119,3 +119,14 @@ impl std::fmt::Display for LicenseSource {
         }
     }
 }
+
+/// A scanned sub-project within a workspace, holding its resolved dependencies.
+#[derive(Debug, Clone)]
+pub struct ProjectScan {
+    /// Directory base-name used as the project display label.
+    pub name: String,
+    /// Absolute path to the project root.
+    pub path: std::path::PathBuf,
+    /// All resolved dependencies for this project.
+    pub deps: Vec<Dependency>,
+}

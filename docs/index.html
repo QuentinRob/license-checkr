@@ -856,9 +856,9 @@
         <p>Colored terminal table for local development, structured JSON for pipelines, or a polished multi-page PDF to share with your legal team.</p>
       </div>
       <div class="feature-card glass" style="border-radius:var(--r-xl)">
-        <span class="feature-icon">🚦</span>
-        <h3>CI-First Design</h3>
-        <p>Exits with code <code>1</code> when a policy violation is found. Combine with <code>--quiet</code> for clean, zero-noise CI output.</p>
+        <span class="feature-icon">🗂️</span>
+        <h3>Workspace Scanning</h3>
+        <p>Use <code>--recursive</code> to scan every sub-project in a monorepo in one pass. Each project is scanned independently with its own policy; the PDF includes per-project sections.</p>
       </div>
     </div>
   </div>
@@ -901,19 +901,25 @@
           <span class="t-title">license-checkr</span>
         </div>
         <div class="terminal-body">
-<span class="tl"><span class="t-p">❯</span> <span class="t-c">license-checkr</span> <span class="t-f">--online</span></span>
+<span class="tl"><span class="t-p">❯</span> <span class="t-c">license-checkr</span> <span class="t-f">--recursive</span> <span class="t-f">--online</span></span>
 <span class="tb"></span>
-<span class="tl">  <span class="t-a">→</span> Rust    <span class="t-n">42</span> <span class="t-m">dependencies</span></span>
-<span class="tl">  <span class="t-a">→</span> Node    <span class="t-n">87</span> <span class="t-m">dependencies</span></span>
-<span class="tl">  <span class="t-a">→</span> Python  <span class="t-n">23</span> <span class="t-m">dependencies</span></span>
+<span class="tl">  <span class="t-m">Root:  /home/user/monorepo</span></span>
+<span class="tl">  <span class="t-m">Found: 3 sub-projects</span></span>
+<span class="tb"></span>
+<span class="tl">  <span class="t-a">→</span> scanning <span class="t-lb">backend</span>  (/home/user/monorepo/backend)</span>
+<span class="tl">    <span class="t-m">· Rust    42 dependencies</span></span>
+<span class="tl">  <span class="t-a">→</span> scanning <span class="t-lb">frontend</span>  (/home/user/monorepo/frontend)</span>
+<span class="tl">    <span class="t-m">· Node    87 dependencies</span></span>
+<span class="tl">  <span class="t-a">→</span> scanning <span class="t-lb">analytics</span>  (/home/user/monorepo/analytics)</span>
+<span class="tl">    <span class="t-m">· Python  23 dependencies</span></span>
 <span class="tb"></span>
 <span class="tl"><span class="t-bx"> ┌──────────────────────────────────────────────────────┐</span></span>
-<span class="tl"><span class="t-bx"> │  </span><span class="t-lb">SUMMARY</span><span class="t-bx">                                             │</span></span>
-<span class="tl"><span class="t-bx"> │  </span><span class="t-m">Scanned   : </span><span class="t-lb">/home/user/my-app                       </span><span class="t-bx">│</span></span>
-<span class="tl"><span class="t-bx"> │  </span><span class="t-m">Total     : </span><span class="t-lb">152                                    </span><span class="t-bx">│</span></span>
-<span class="tl"><span class="t-bx"> │  </span><span class="t-ok">✓  Pass   </span><span class="t-m">:  </span><span class="t-n">138</span><span class="t-m">  MIT (82), Apache-2.0 (41) …    </span><span class="t-bx">│</span></span>
-<span class="tl"><span class="t-bx"> │  </span><span class="t-wn">⚠  Warn   </span><span class="t-m">:   </span><span class="t-n">11</span><span class="t-m">  unknown (8), LGPL-2.1 (3)       </span><span class="t-bx">│</span></span>
-<span class="tl"><span class="t-bx"> │  </span><span class="t-er">✗  Error  </span><span class="t-m">:    </span><span class="t-n">3</span><span class="t-m">  GPL-3.0 (3)                     </span><span class="t-bx">│</span></span>
+<span class="tl"><span class="t-bx"> │  </span><span class="t-lb">WORKSPACE SUMMARY</span><span class="t-bx">                                   │</span></span>
+<span class="tl"><span class="t-bx"> │  </span><span class="t-m">Projects           : </span><span class="t-lb">3                              </span><span class="t-bx">│</span></span>
+<span class="tl"><span class="t-bx"> │  </span><span class="t-m">Total dependencies : </span><span class="t-lb">152                            </span><span class="t-bx">│</span></span>
+<span class="tl"><span class="t-bx"> │  </span><span class="t-ok">✓  Pass            :  </span><span class="t-n">138</span><span class="t-m">  MIT (82), Apache-2.0 (41)</span><span class="t-bx">│</span></span>
+<span class="tl"><span class="t-bx"> │  </span><span class="t-wn">⚠  Warn            :   </span><span class="t-n">11</span><span class="t-m">  unknown (8), LGPL-2.1 (3)</span><span class="t-bx">│</span></span>
+<span class="tl"><span class="t-bx"> │  </span><span class="t-er">✗  Error           :    </span><span class="t-n">3</span><span class="t-m">  GPL-3.0 (3)              </span><span class="t-bx">│</span></span>
 <span class="tl"><span class="t-bx"> └──────────────────────────────────────────────────────┘</span></span>
         </div>
       </div>

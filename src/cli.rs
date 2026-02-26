@@ -19,6 +19,10 @@ pub struct Cli {
     #[arg(long)]
     pub online: bool,
 
+    /// Recursively scan subdirectories for sub-projects (workspace mode)
+    #[arg(short = 'r', long)]
+    pub recursive: bool,
+
     /// Policy config file [default: ./.license-checkr/config.toml, fallback ~/.config/license-checkr/config.toml]
     #[arg(long)]
     pub config: Option<PathBuf>,

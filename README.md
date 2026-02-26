@@ -23,6 +23,7 @@
 - 🧮 **Expression support** — parses full SPDX compound expressions including `(Apache-2.0 OR MIT) AND BSD-3-Clause` with proper operator precedence (`AND` binds tighter than `OR`, parentheses override)
 - 📊 **Multiple outputs** — colored terminal table, machine-readable JSON, or a shareable PDF report
 - 🚦 **CI-friendly** — exits with code `1` when a policy error is found; `0` otherwise
+- 🗂️ **Workspace scanning** — use `--recursive` to scan all sub-projects in a monorepo in a single run
 
 ---
 
@@ -59,6 +60,7 @@ license-checkr [OPTIONS] [PATH]
 | `--report <FORMAT>` | Output format: `terminal` (default), `json`, `pdf` |
 | `--pdf [FILE]` | Write PDF report (default: `license-report.pdf`) |
 | `--exclude-lang <LANG>` | Skip an ecosystem: `rust` `python` `java` `node` `dotnet` (repeatable) |
+| `-r, --recursive` | Recursively scan sub-projects (workspace mode) |
 | `-v, --verbose` | Show all dependencies, not just warnings and errors |
 | `-q, --quiet` | Print summary line only |
 
@@ -83,6 +85,26 @@ license-checkr --exclude-lang python --exclude-lang java
 # Quiet mode — perfect for CI scripts
 license-checkr -q && echo "✅ All licenses OK"
 ```
+
+### Workspace scanning
+
+When your repository contains multiple sub-projects (a monorepo), use `--recursive` to discover and scan every sub-project in a single pass:
+
+```bash
+# Scan all sub-projects under the current directory
+license-checkr --recursive
+
+# Workspace scan with online enrichment and a unified PDF report
+license-checkr --recursive --online --pdf workspace-report.pdf
+
+# JSON output: array of { project, path, dependencies }
+license-checkr --recursive --report json | jq '.[].project'
+
+# Quiet workspace summary — great for CI
+license-checkr --recursive -q && echo "✅ All workspace licenses OK"
+```
+
+Each sub-project is scanned independently with its own policy config (if present). The PDF report includes a workspace cover page with an aggregated summary, followed by per-project Risk Summary and Dependency Table sections.
 
 ---
 
@@ -231,7 +253,6 @@ Contributions are welcome! Here's how to get started:
 - 📡 NuGet registry client for `--online` .NET support
 - 🌐 Additional SPDX identifiers in the classifier
 - 🧪 More unit tests and edge-case coverage
-- 🌍 Recursive / multi-project workspace scanning
 
 Please open an issue before starting work on a large change so we can discuss the approach.
 
