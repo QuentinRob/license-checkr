@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="docs/icon.svg" alt="license-checkr logo" width="120" />
-</p>
-
 # 🔍 license-checkr
 
 [![Build](https://github.com/QuentinRob/license-checkr/actions/workflows/ci.yml/badge.svg)](https://github.com/QuentinRob/license-checkr/actions)
