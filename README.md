@@ -88,13 +88,13 @@ license-checkr -q && echo "✅ All licenses OK"
 
 ## 🌍 Supported Ecosystems
 
-| Ecosystem | Manifest files parsed |
-|---|---|
-| 🦀 **Rust** | `Cargo.lock` |
-| 🐍 **Python** | `Pipfile.lock`, `requirements.txt`, `pyproject.toml` |
-| ☕ **Java** | `pom.xml`, `build.gradle`, `build.gradle.kts`, `gradle.lockfile` |
-| 🟢 **Node.js** | `package-lock.json`, `yarn.lock`, `package.json` |
-| 🔷 **.NET** | `*.csproj`, `*.fsproj`, `packages.config`, `paket.lock` |
+| Ecosystem | Manifest files parsed | Unit tested | Offline validated | Online validated |
+|---|---|:---:|:---:|:---:|
+| 🦀 **Rust** | `Cargo.lock` | ✅ | ✅ | ✅ crates.io |
+| 🐍 **Python** | `Pipfile.lock`, `requirements.txt`, `pyproject.toml` | ✅ | ⚠️ not validated | ⚠️ not validated |
+| ☕ **Java** | `pom.xml`, `build.gradle`, `build.gradle.kts`, `gradle.lockfile` | ✅ | ⚠️ not validated | ⚠️ not validated |
+| 🟢 **Node.js** | `package-lock.json`, `yarn.lock`, `package.json` | ✅ | ⚠️ not validated | ⚠️ not validated |
+| 🔷 **.NET** | `*.csproj`, `*.fsproj`, `packages.config`, `paket.lock` | ✅ | ⚠️ not validated | ❌ no NuGet client yet |
 
 Multiple ecosystems are detected automatically in a single pass. Use `--exclude-lang` to opt out of any you don't need.
 
