@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.3] — 2026-02-26
+
+### Added
+- Offline license resolution for Rust: the local Cargo registry cache
+  (`$CARGO_HOME/registry/src/`) is now walked to extract `[package].license`
+  from each crate's `Cargo.toml`, populating license data without any network
+  access. A new `LicenseSource::Cache` variant distinguishes these results
+  from manifest, registry, and unknown sources (#36)
+
+### Changed
+- README: project logo (shield icon) displayed at the top of the page (#38)
+- README: ecosystem table expanded with unit-tested / offline-validated /
+  online-validated status columns per language (#37)
+- CI: cross-platform release workflow added; pushing a `v*` tag now builds
+  release binaries for Windows x86_64, Linux x86_64, Linux ARM64, macOS
+  x86_64, and macOS ARM64, then creates a GitHub Release with the matching
+  changelog section attached (#40)
+
+---
+
 ## [0.1.2] — 2026-02-25
 
 ### Added
@@ -102,6 +122,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.github/workflows/ci.yml` — runs `cargo test` + `cargo clippy` on push/PR to `main`
 - 19 unit tests covering all parsers, SPDX classifier, normalizer, and Maven POM extraction
 
+[0.1.3]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.3
 [0.1.2]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.2
 [0.1.1]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.1
 [0.1.0]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.0
