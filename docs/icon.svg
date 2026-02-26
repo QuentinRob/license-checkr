@@ -1,0 +1,15 @@
+<svg width="220" height="220" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+  <rect width="220" height="220" fill="#F4F6F8"/>
+
+  <!-- Outer Shield -->
+  <path d="M110 38             L168 62             V112             C168 155 140 178 110 194             C80 178 52 155 52 112             V62 Z" fill="#0B1F3A"/>
+
+  <!-- Inner Shield Layer -->
+  <path d="M110 55             L152 72             V112             C152 142 132 158 110 170             C88 158 68 142 68 112             V72 Z" fill="#D35400"/>
+
+  <!-- Subtle Divider Line -->
+  <line x1="80" y1="98" x2="140" y2="98" stroke="#F4F6F8" stroke-width="3" opacity="0.5"/>
+
+  <!-- Checkmark -->
+  <path d="M88 118 L106 136 L142 96" fill="none" stroke="#1ABC9C" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
