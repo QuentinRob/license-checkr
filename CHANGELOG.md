@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.5] — 2026-02-26
+
+### Added
+- **Workspace scanning** (`-r` / `--recursive`): a single pass now discovers
+  all sub-projects under a given root directory and produces a unified report.
+  Each sub-project is scanned concurrently via `tokio::spawn` and may carry
+  its own `.license-checkr/config.toml` policy (#46)
+- `find_workspace_projects()` in `detector.rs`: recursive directory walk that
+  stops descending once a manifest file is found and skips noise directories
+  (`node_modules`, `target`, `vendor`, `.git`, `__pycache__`, `.venv`, etc.)
+  with symlink-cycle protection via path canonicalization (#46)
+- `ProjectScan` struct in `models.rs` to carry per-project name, path, and
+  resolved dependency list (#46)
+- Terminal workspace report: aggregated summary box showing total / pass / warn
+  / error counts across all projects, followed by per-project sections with
+  error and warn dependency tables (#46)
+- PDF workspace report: new workspace cover page with aggregate stat cards and
+  a projects-scanned table, followed by per-project Risk Summary and Dependency
+  Table pages labelled with the project name (#46)
+- JSON workspace output: array of `{ project, path, dependencies }` objects
+  compatible with tools such as `jq` (#46)
+- 8 unit tests for `find_workspace_projects` covering root project detection,
+  sub-project discovery, no-recurse-into-project, skipped dirs (`node_modules`,
+  `target`), empty directory, and sort order (#46)
+
+### Changed
+- Online enrichment batch size reduced from 75 → 50 to improve stability when
+  multiple workspace projects trigger concurrent registry requests (#46)
+
+---
+
 ## [0.1.4] — 2026-02-26
 
 ### Changed
@@ -134,6 +165,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.github/workflows/ci.yml` — runs `cargo test` + `cargo clippy` on push/PR to `main`
 - 19 unit tests covering all parsers, SPDX classifier, normalizer, and Maven POM extraction
 
+[0.1.5]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.5
 [0.1.4]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.4
 [0.1.3]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.3
 [0.1.2]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.2
