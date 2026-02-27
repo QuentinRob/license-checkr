@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.7] — 2026-02-27
+
+### Changed
+- README installation section now leads with per-platform download badges
+  (Windows x64, Linux x64, Linux ARM64, macOS Apple Silicon) linking to the
+  latest GitHub Release, followed by quick extraction instructions (#48)
+- GitHub Pages landing page hero and final CTA sections now feature an
+  OS-detected primary download button that resolves the visitor's platform at
+  runtime and links directly to the correct release binary; falls back to the
+  releases page for unrecognised platforms (#49)
+- Secondary CTAs ("Get Started", "View on GitHub") demoted to outline style
+  now that the download button is the primary hero action (#49)
+
+---
+
 ## [0.1.6] — 2026-02-26
 
 ### Fixed
