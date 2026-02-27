@@ -29,6 +29,35 @@
 
 ## 🚀 Installation
 
+### Pre-built binaries
+
+Download the latest release for your platform:
+
+<p>
+  <a href="https://github.com/QuentinRob/license-checkr/releases/latest">
+    <img src="https://img.shields.io/badge/Windows-x86__64-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows x64" />
+  </a>
+  <a href="https://github.com/QuentinRob/license-checkr/releases/latest">
+    <img src="https://img.shields.io/badge/Linux-x86__64-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="Linux x64" />
+  </a>
+  <a href="https://github.com/QuentinRob/license-checkr/releases/latest">
+    <img src="https://img.shields.io/badge/Linux-ARM64-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="Linux ARM64" />
+  </a>
+  <a href="https://github.com/QuentinRob/license-checkr/releases/latest">
+    <img src="https://img.shields.io/badge/macOS-Apple_Silicon-000000?style=for-the-badge&logo=apple&logoColor=white" alt="macOS ARM64" />
+  </a>
+</p>
+
+Extract and place the binary somewhere on your `PATH`:
+
+```bash
+# Linux / macOS
+tar -xzf license-checkr-*.tar.gz
+sudo mv license-checkr /usr/local/bin/
+
+# Windows — extract the .zip and move license-checkr.exe to a folder in your PATH
+```
+
 ### From source (requires Rust 1.75+)
 
 ```bash

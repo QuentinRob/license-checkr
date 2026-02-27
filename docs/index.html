@@ -389,6 +389,24 @@
 
     .hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
+    /* OS-detected download button */
+    .dl-wrap { margin-bottom: 28px; }
+    .btn-dl {
+      padding: 14px 28px;
+      font-size: 0.97rem; font-weight: 700;
+      flex-direction: column; align-items: center; gap: 3px;
+      min-width: 230px;
+    }
+    .btn-dl-inner { display: flex; align-items: center; gap: 9px; }
+    .btn-dl-note { font-size: 0.72rem; font-weight: 400; opacity: 0.6; letter-spacing: 0.03em; }
+    .dl-alts {
+      margin-top: 12px;
+      display: flex; gap: 16px; justify-content: center;
+      font-size: 0.8rem;
+    }
+    .dl-alts a { color: var(--text-muted); transition: color 0.15s; }
+    .dl-alts a:hover { color: var(--text); }
+
     /* ── Stats strip ──────────────────────────────────── */
     .stats-wrap {
       border-top: 1px solid var(--divider);
@@ -790,7 +808,22 @@
       Scan your entire dependency tree, classify licenses using SPDX standards,
       and enforce your policy — before a license becomes a legal problem.
     </p>
-    <div class="install-wrap">
+    <!-- OS-detected primary download -->
+    <div class="dl-wrap">
+      <a data-dl-btn href="https://github.com/QuentinRob/license-checkr/releases/latest" class="btn btn-primary btn-dl">
+        <div class="btn-dl-inner">
+          <span data-dl-icon></span>
+          <span data-dl-label>Download</span>
+        </div>
+        <small data-dl-note class="btn-dl-note">All platforms</small>
+      </a>
+      <div class="dl-alts">
+        <a href="https://github.com/QuentinRob/license-checkr/releases/latest">All platforms →</a>
+        <span aria-hidden="true" style="color:var(--text-muted)">·</span>
+        <a href="#cargo-install">Build from source</a>
+      </div>
+    </div>
+    <div class="install-wrap" id="cargo-install">
       <div class="install-box">
         <div class="install-cmd">
           <span class="dollar">$</span><span id="install-text">cargo install --git https://github.com/QuentinRob/license-checkr</span>
@@ -802,7 +835,7 @@
       </div>
     </div>
     <div class="hero-ctas">
-      <a href="#get-started" class="btn btn-primary" style="padding:12px 24px;font-size:0.93rem;">Get Started →</a>
+      <a href="#get-started" class="btn btn-outline" style="padding:12px 24px;font-size:0.93rem;">Get Started →</a>
       <a href="https://github.com/QuentinRob/license-checkr" class="btn btn-outline" style="padding:12px 24px;font-size:0.93rem;">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
         View on GitHub
@@ -1063,15 +1096,23 @@
   <div class="container" style="position:relative;z-index:1">
     <h2>Start in 30 seconds</h2>
     <p>No accounts. No config files. No surprises.</p>
-    <div>
+    <a data-dl-btn href="https://github.com/QuentinRob/license-checkr/releases/latest" class="btn btn-primary btn-dl" style="margin-bottom:20px;">
+      <div class="btn-dl-inner">
+        <span data-dl-icon></span>
+        <span data-dl-label>Download</span>
+      </div>
+      <small data-dl-note class="btn-dl-note">All platforms</small>
+    </a>
+    <div style="margin-bottom:16px;">
       <div class="cta-box">
         <div class="cta-box-text"><span class="dollar">$</span>cargo install --git https://github.com/QuentinRob/license-checkr</div>
       </div>
     </div>
-    <a href="https://github.com/QuentinRob/license-checkr" class="btn btn-primary" style="font-size:1rem;padding:14px 32px;">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-      View on GitHub
-    </a>
+    <div class="dl-alts">
+      <a href="https://github.com/QuentinRob/license-checkr/releases/latest">All platforms →</a>
+      <span aria-hidden="true" style="color:var(--text-muted)">·</span>
+      <a href="https://github.com/QuentinRob/license-checkr">View on GitHub</a>
+    </div>
   </div>
 </section>
 
@@ -1129,6 +1170,54 @@
   window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
     if (!document.documentElement.dataset.theme) applyThemeClass();
   });
+
+  // ── OS-aware download buttons ─────────────────────────
+  (function () {
+    var VERSION = 'VERSION_PLACEHOLDER';
+    var BASE    = 'https://github.com/QuentinRob/license-checkr/releases/download/' + VERSION;
+    var LATEST  = 'https://github.com/QuentinRob/license-checkr/releases/latest';
+
+    var WIN_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M0 0h11.377v11.39H0V0zm12.623 0H24v11.39H12.623V0zM0 12.61h11.377V24H0V12.61zm12.623 0H24V24H12.623V12.61z"/></svg>';
+    var MAC_ICON = '<svg width="13" height="16" viewBox="0 0 814 1000" fill="currentColor" aria-hidden="true"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 420.3 0 300.7 0 186.3 0 83.4 53.4 28.9 106.7 28.9c50.6 0 83.8 33.2 152.9 33.2 66.3 0 107.3-33.2 159.8-33.2 50.7 0 104.2 53.4 154 53.4zm-132.5-199.8c25.9-30.7 44.6-73.9 44.6-117.1 0-5.8-.6-11.9-1.3-17.3-42.5 1.9-92.8 28.2-122.9 61.8-23.2 25.3-45.1 68.6-45.1 112.3 0 6.5 1.3 12.9 1.9 14.9 2.6.6 6.5 1.3 10.4 1.3 38.1 0 86.5-26 112.4-55.9z"/></svg>';
+    var LIN_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10zM6 10l1.5 1.5L6 13l1 1 2.5-2.5L7 9 6 10zm5 4h5v-1.5h-5V14z"/></svg>';
+
+    var PLATFORMS = {
+      windows:   { label: 'Download for Windows', note: 'x86_64 · .zip',           icon: WIN_ICON, file: 'license-checkr-' + VERSION + '-x86_64-pc-windows-msvc.zip' },
+      macos:     { label: 'Download for macOS',   note: 'Apple Silicon · .tar.gz',  icon: MAC_ICON, file: 'license-checkr-' + VERSION + '-aarch64-apple-darwin.tar.gz' },
+      linux:     { label: 'Download for Linux',   note: 'x86_64 · .tar.gz',         icon: LIN_ICON, file: 'license-checkr-' + VERSION + '-x86_64-unknown-linux-gnu.tar.gz' },
+      linux_arm: { label: 'Download for Linux',   note: 'ARM64 · .tar.gz',          icon: LIN_ICON, file: 'license-checkr-' + VERSION + '-aarch64-unknown-linux-gnu.tar.gz' }
+    };
+
+    function detectOS() {
+      var uad = navigator.userAgentData;
+      if (uad && uad.platform) {
+        var p = uad.platform.toLowerCase();
+        if (p === 'windows') return 'windows';
+        if (p === 'macos')   return 'macos';
+        if (p === 'linux')   return /aarch64|arm64/i.test(navigator.userAgent) ? 'linux_arm' : 'linux';
+      }
+      var ua  = navigator.userAgent || '';
+      var plt = (navigator.platform || '').toLowerCase();
+      if (/win/i.test(plt))                          return 'windows';
+      if (/mac/i.test(plt))                          return 'macos';
+      if (/linux/i.test(plt) || /linux/i.test(ua))  return /aarch64|arm64/i.test(ua) ? 'linux_arm' : 'linux';
+      return null;
+    }
+
+    var os   = detectOS();
+    var info = os ? PLATFORMS[os] : null;
+
+    document.querySelectorAll('[data-dl-btn]').forEach(function (btn) {
+      if (!info) return; // unknown OS: keep default href + label
+      btn.href = BASE + '/' + info.file;
+      var iconEl  = btn.querySelector('[data-dl-icon]');
+      var labelEl = btn.querySelector('[data-dl-label]');
+      var noteEl  = btn.querySelector('[data-dl-note]');
+      if (iconEl)  iconEl.innerHTML  = info.icon;
+      if (labelEl) labelEl.textContent = info.label;
+      if (noteEl)  noteEl.textContent  = info.note;
+    });
+  })();
 
   // ── Copy install command ──────────────────────────────
   function copyInstall() {
