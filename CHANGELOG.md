@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.3] — 2026-03-02
+
+### Fixed
+- **MCP server Ctrl+C on Windows**: pressing Ctrl+C no longer exits with
+  `STATUS_CONTROL_C_EXIT (0xc000013a)`. The Windows OS default Ctrl+C handler
+  fires on a new thread and calls `ExitProcess` synchronously, before tokio's
+  async runtime gets any CPU time. A synchronous `SetConsoleCtrlHandler`
+  callback is now registered via raw `extern "system"` FFI at the start of
+  `mcp::serve()`; it returns `TRUE` for `CTRL_C_EVENT` (suppressing the default
+  handler) and calls `std::process::exit(0)` directly. No new dependencies.
+  Non-Ctrl+C console events (CTRL_BREAK, CLOSE, etc.) are passed through
+  unchanged. Linux and macOS are unaffected (#56)
+
+---
+
 ## [0.2.2] — 2026-03-02
 
 ### Added
@@ -244,6 +259,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.github/workflows/ci.yml` — runs `cargo test` + `cargo clippy` on push/PR to `main`
 - 19 unit tests covering all parsers, SPDX classifier, normalizer, and Maven POM extraction
 
+[0.2.3]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.2.3
 [0.2.2]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.2.2
 [0.2.1]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.2.1
 [0.2.0]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.2.0
