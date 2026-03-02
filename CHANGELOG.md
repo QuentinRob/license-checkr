@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.2] — 2026-03-02
+
+### Added
+- **Startup update check**: on every CLI run (except `mcp serve` and `--quiet`
+  mode), the tool fetches the latest release tag from the GitHub Releases API
+  and prints a one-line notice to stderr when a newer version is available;
+  fails silently on network errors or timeouts so the scan is never blocked (#54)
+- `src/updater.rs`: `check_for_update()` with a 3-second timeout and
+  `is_newer()` semver tuple comparator; 5 unit tests added (#54)
+
+---
+
 ## [0.2.1] — 2026-03-02
 
 ### Changed
@@ -232,6 +244,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.github/workflows/ci.yml` — runs `cargo test` + `cargo clippy` on push/PR to `main`
 - 19 unit tests covering all parsers, SPDX classifier, normalizer, and Maven POM extraction
 
+[0.2.2]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.2.2
 [0.2.1]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.2.1
 [0.2.0]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.2.0
 [0.1.6]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.6
