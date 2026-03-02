@@ -229,10 +229,46 @@ impl ServerHandler for LicenseCheckerMcp {
     }
 }
 
+// ── Windows Ctrl+C handler ────────────────────────────────────────────────────
+//
+// On Windows, pressing Ctrl+C dispatches CTRL_C_EVENT on a new OS thread.
+// If no registered handler returns TRUE the default handler calls
+// ExitProcess(STATUS_CONTROL_C_EXIT) synchronously — before tokio's async
+// runtime ever gets CPU time.  Register a synchronous handler via raw FFI so
+// we can suppress the default exit code and terminate cleanly with 0.
+#[cfg(windows)]
+#[link(name = "Kernel32")]
+extern "system" {
+    fn SetConsoleCtrlHandler(
+        handler_routine: Option<unsafe extern "system" fn(dw_ctrl_type: u32) -> i32>,
+        add: i32,
+    ) -> i32;
+}
+
+#[cfg(windows)]
+fn install_ctrl_c_handler() {
+    unsafe extern "system" fn handler(dw_ctrl_type: u32) -> i32 {
+        if dw_ctrl_type == 0 {
+            // CTRL_C_EVENT — exit cleanly before the OS default handler fires
+            eprintln!("\n[mcp] Received Ctrl+C, shutting down gracefully");
+            std::process::exit(0);
+        }
+        0 // FALSE — pass CTRL_BREAK / CLOSE / etc. to the next handler
+    }
+    // SAFETY: `handler` has the correct extern "system" signature for
+    // SetConsoleCtrlHandler and does not reference any Rust state.
+    unsafe { SetConsoleCtrlHandler(Some(handler), 1); }
+}
+
 // ── Entry point ───────────────────────────────────────────────────────────────
 
 /// Start an MCP server over stdio and block until the client disconnects or Ctrl+C is received.
 pub async fn serve() -> Result<()> {
+    // On Windows install a synchronous Ctrl+C handler before starting the
+    // server so the process exits with code 0 instead of STATUS_CONTROL_C_EXIT.
+    #[cfg(windows)]
+    install_ctrl_c_handler();
+
     eprintln!("[mcp] Starting license-checkr MCP server (stdio transport)");
 
     let service = LicenseCheckerMcp::new();
