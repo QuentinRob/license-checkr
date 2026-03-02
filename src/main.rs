@@ -20,6 +20,7 @@ mod models;
 mod registry;
 mod report;
 mod scanner;
+mod updater;
 
 use std::path::Path;
 
@@ -38,10 +39,16 @@ use models::{Ecosystem, PolicyVerdict, ProjectScan};
 async fn main() -> Result<()> {
     let cli = Cli::parse();
 
-    // Dispatch MCP subcommand before the scan path resolution.
+    // Dispatch MCP subcommand before anything else — its stdio transport must
+    // not be polluted by update notices or other stderr output.
     if let Some(Commands::Mcp { action: McpAction::Serve }) = &cli.command {
         mcp::serve().await?;
         return Ok(());
+    }
+
+    // Check for a newer release on GitHub (skipped in quiet/scripting mode).
+    if !cli.quiet {
+        updater::check_for_update().await;
     }
 
     let path = cli
