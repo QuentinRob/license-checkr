@@ -307,7 +307,7 @@ fn parse_ecosystem(s: &str) -> Option<Ecosystem> {
     }
 }
 
-fn classify_and_apply_policy(deps: &mut Vec<crate::models::Dependency>, config: &crate::config::Config) {
+fn classify_and_apply_policy(deps: &mut [crate::models::Dependency], config: &crate::config::Config) {
     for dep in deps.iter_mut() {
         let license = dep
             .license_spdx
