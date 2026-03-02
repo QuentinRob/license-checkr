@@ -84,6 +84,12 @@ impl LicenseCheckerMcp {
         &self,
         #[tool(aggr)] input: ScanLicensesInput,
     ) -> Result<CallToolResult, McpError> {
+        eprintln!(
+            "[mcp] scan_licenses: path={:?} online={} recursive={}",
+            input.path,
+            input.online.unwrap_or(false),
+            input.recursive.unwrap_or(false),
+        );
         let path = std::path::PathBuf::from(&input.path);
         let path = path.canonicalize().unwrap_or(path);
 
@@ -157,6 +163,10 @@ impl LicenseCheckerMcp {
         &self,
         #[tool(aggr)] input: GetPackageLicenseInput,
     ) -> Result<CallToolResult, McpError> {
+        eprintln!(
+            "[mcp] get_package_license: name={} version={} ecosystem={}",
+            input.name, input.version, input.ecosystem,
+        );
         let client = reqwest::Client::builder()
             .timeout(std::time::Duration::from_secs(10))
             .build()
@@ -221,14 +231,30 @@ impl ServerHandler for LicenseCheckerMcp {
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
-/// Start an MCP server over stdio and block until the client disconnects.
+/// Start an MCP server over stdio and block until the client disconnects or Ctrl+C is received.
 pub async fn serve() -> Result<()> {
+    eprintln!("[mcp] Starting license-checkr MCP server (stdio transport)");
+
     let service = LicenseCheckerMcp::new();
     let server = service
         .serve(rmcp::transport::io::stdio())
         .await
         .map_err(|e| anyhow::anyhow!("MCP transport error: {}", e))?;
-    server.waiting().await?;
+
+    eprintln!("[mcp] Server ready — waiting for requests");
+
+    tokio::select! {
+        result = server.waiting() => {
+            match result {
+                Ok(_) => eprintln!("[mcp] Client disconnected, shutting down"),
+                Err(e) => eprintln!("[mcp] Server error: {e}"),
+            }
+        }
+        _ = tokio::signal::ctrl_c() => {
+            eprintln!("\n[mcp] Received Ctrl+C, shutting down gracefully");
+        }
+    }
+
     Ok(())
 }
 
