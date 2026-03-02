@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0] — 2026-03-02
+
+### Added
+- **MCP server** (`license-checkr mcp serve`): exposes the license scanner as
+  an [MCP (Model Context Protocol)](https://modelcontextprotocol.io) tool over
+  stdio JSON-RPC, letting AI agents such as Claude Desktop and Cursor query it
+  directly (#50)
+- `scan_licenses` MCP tool: accepts `path`, `online`, `config`, `exclude_lang`,
+  and `recursive` — runs the full scan pipeline and returns a JSON summary with
+  per-dependency license, risk, and verdict fields (#50)
+- `get_package_license` MCP tool: accepts `name`, `version`, and `ecosystem`
+  (`rust` / `python` / `java` / `node`) — fetches from the upstream registry
+  and returns license, risk classification, and policy verdict (#50)
+- `src/scanner.rs`: `scan_project()` and `enrich_online()` extracted from
+  `main.rs` as `pub async fn`, shared by both the CLI and the MCP server (#50)
+- `mcp serve` subcommand added to the CLI via a new `Commands` / `McpAction`
+  enum in `cli.rs`; existing scan flags and behaviour are unchanged (#50)
+- Claude Desktop configuration documented in README and GitHub Pages site (#51)
+
+### Changed
+- README: new **🤖 MCP Server** feature bullet and `## 🤖 MCP Server (AI Agent Tool)`
+  section with tools table, Claude Desktop config JSON, and example prompts (#51)
+- GitHub Pages: MCP feature card added to the features grid; new "MCP server"
+  section (two-column layout, config code block, example prompt chips) added
+  before the CTA (#51)
+
+---
+
 ## [0.1.7] — 2026-02-27
 
 ### Changed
@@ -193,6 +221,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.github/workflows/ci.yml` — runs `cargo test` + `cargo clippy` on push/PR to `main`
 - 19 unit tests covering all parsers, SPDX classifier, normalizer, and Maven POM extraction
 
+[0.2.0]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.2.0
 [0.1.6]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.6
 [0.1.5]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.5
 [0.1.4]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.4
