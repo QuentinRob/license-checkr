@@ -24,6 +24,7 @@
 - 📊 **Multiple outputs** — colored terminal table, machine-readable JSON, or a shareable PDF report
 - 🚦 **CI-friendly** — exits with code `1` when a policy error is found; `0` otherwise
 - 🗂️ **Workspace scanning** — use `--recursive` to scan all sub-projects in a monorepo in a single run
+- 🤖 **MCP server** — expose `license-checkr` as an MCP tool so AI agents (Claude Desktop, Cursor, etc.) can scan projects and look up licenses directly
 
 ---
 
@@ -134,6 +135,46 @@ license-checkr --recursive -q && echo "✅ All workspace licenses OK"
 ```
 
 Each sub-project is scanned independently with its own policy config (if present). The PDF report includes a workspace cover page with an aggregated summary, followed by per-project Risk Summary and Dependency Table sections.
+
+---
+
+## 🤖 MCP Server (AI Agent Tool)
+
+`license-checkr` can act as an [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server, letting AI agents like Claude Desktop or Cursor query it as a tool.
+
+```bash
+license-checkr mcp serve
+```
+
+This starts a JSON-RPC server over stdio. The server exposes two tools:
+
+| Tool | Description |
+|---|---|
+| `scan_licenses` | Scan a project directory — accepts `path`, `online`, `config`, `exclude_lang`, `recursive` |
+| `get_package_license` | Look up a single package — accepts `name`, `version`, `ecosystem` (`rust`/`python`/`java`/`node`) |
+
+### Claude Desktop configuration
+
+Add to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "license-checkr": {
+      "command": "license-checkr",
+      "args": ["mcp", "serve"]
+    }
+  }
+}
+```
+
+Config file locations:
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+Once configured, Claude can answer questions like:
+- *"Scan my project at ~/my-app and show any license errors"*
+- *"What license does serde 1.0 use? Is it compatible with my policy?"*
 
 ---
 

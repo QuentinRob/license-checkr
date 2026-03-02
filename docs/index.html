@@ -893,6 +893,11 @@
         <h3>Workspace Scanning</h3>
         <p>Use <code>--recursive</code> to scan every sub-project in a monorepo in one pass. Each project is scanned independently with its own policy; the PDF includes per-project sections.</p>
       </div>
+      <div class="feature-card glass" style="border-radius:var(--r-xl)">
+        <span class="feature-icon">🤖</span>
+        <h3>MCP Server</h3>
+        <p>Run <code>license-checkr mcp serve</code> to expose the scanner as an MCP tool. AI agents like Claude Desktop can audit projects and look up package licenses directly.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -1082,6 +1087,51 @@
         <h3>Enforce</h3>
         <p>Plug into your CI pipeline. Exits <code>1</code> on policy violations — blocking merges before problematic licenses sneak in.</p>
         <code class="step-snip">license-checkr -q</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ MCP SERVER ══════════════════ -->
+<section id="mcp" style="position:relative;overflow:hidden;">
+  <div class="mesh" style="opacity:0.5">
+    <div class="orb" style="width:450px;height:450px;background:var(--orb-3);top:-100px;right:-80px;animation-delay:-3s;filter:blur(110px);"></div>
+    <div class="orb" style="width:350px;height:350px;background:var(--orb-1);bottom:-50px;left:5%;animation-delay:-7s;filter:blur(90px);"></div>
+  </div>
+  <div class="container" style="position:relative;z-index:1">
+    <div class="policy-layout">
+      <div class="policy-text fade-in">
+        <div class="section-tag">MCP server</div>
+        <h2>Talk to your AI.<br>Let it check licenses.</h2>
+        <p>Start <code style="font-size:0.88em;color:var(--text-2);background:var(--glass-bg);border:1px solid var(--glass-border);padding:2px 6px;border-radius:5px;">license-checkr mcp serve</code> and connect it to any MCP-compatible AI agent. Claude Desktop, Cursor, and other tools can then audit your projects and look up package licenses on demand.</p>
+        <p>Two tools are exposed over stdio JSON-RPC — no extra config needed.</p>
+        <ul class="policy-points">
+          <li><strong>scan_licenses</strong> — full project scan with policy evaluation</li>
+          <li><strong>get_package_license</strong> — single-package registry lookup</li>
+          <li>Works with Claude Desktop, Cursor, and any MCP client</li>
+          <li>Reuses the same pipeline as the CLI — consistent results</li>
+        </ul>
+      </div>
+      <div class="fade-in">
+        <div class="code-block">
+          <div class="code-block-hdr">claude_desktop_config.json</div>
+          <pre>
+<span class="tk-s">{</span>
+  <span class="tk-q">"mcpServers"</span><span class="tk-k">:</span> <span class="tk-s">{</span>
+    <span class="tk-q">"license-checkr"</span><span class="tk-k">:</span> <span class="tk-s">{</span>
+      <span class="tk-q">"command"</span><span class="tk-k">:</span> <span class="tk-w">"license-checkr"</span><span class="tk-k">,</span>
+      <span class="tk-q">"args"</span><span class="tk-k">:</span> <span class="tk-p">["mcp", "serve"]</span>
+    <span class="tk-s">}</span>
+  <span class="tk-s">}</span>
+<span class="tk-s">}</span></pre>
+        </div>
+        <div style="margin-top:16px;" class="glass" style="border-radius:var(--r-xl);padding:20px 24px;">
+          <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">Example prompts</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--r);padding:10px 14px;font-size:0.85rem;color:var(--text-2);font-style:italic;">"Scan ~/my-app and list any license errors"</div>
+            <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--r);padding:10px 14px;font-size:0.85rem;color:var(--text-2);font-style:italic;">"What license does serde 1.0 use? Is it compatible?"</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

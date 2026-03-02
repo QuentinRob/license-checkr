@@ -15,28 +15,34 @@ mod cli;
 mod config;
 mod detector;
 mod license;
+mod mcp;
 mod models;
 mod registry;
 mod report;
+mod scanner;
 
 use std::path::Path;
 
 use anyhow::Result;
 use clap::Parser;
 use colored::Colorize;
-use indicatif::{ProgressBar, ProgressStyle};
 use serde::Serialize;
 
-use analyzer::Analyzer;
-use cli::{Cli, ReportFormat};
+use cli::{Cli, Commands, McpAction, ReportFormat};
 use config::{apply_policy, load_config};
 use detector::detect_ecosystems;
 use license::classifier::classify;
-use models::{Ecosystem, LicenseSource, PolicyVerdict, ProjectScan};
+use models::{Ecosystem, PolicyVerdict, ProjectScan};
 
 #[tokio::main]
 async fn main() -> Result<()> {
     let cli = Cli::parse();
+
+    // Dispatch MCP subcommand before the scan path resolution.
+    if let Some(Commands::Mcp { action: McpAction::Serve }) = &cli.command {
+        mcp::serve().await?;
+        return Ok(());
+    }
 
     let path = cli
         .path
@@ -91,7 +97,7 @@ async fn run_single(
         std::process::exit(1);
     }
 
-    let mut all_deps = scan_project(path, &config, excluded, cli.online, cli.quiet).await?;
+    let mut all_deps = scanner::scan_project(path, &config, excluded, cli.online, cli.quiet).await?;
 
     // Classify + apply policy
     for dep in &mut all_deps {
@@ -166,7 +172,7 @@ async fn run_workspace(
                 let proj_config = load_config(&proj_path, config_override.as_deref())?;
                 // Always suppress inline prints — output is flushed in order after join_all.
                 let mut deps =
-                    scan_project(&proj_path, &proj_config, &excluded, online, true).await?;
+                    scanner::scan_project(&proj_path, &proj_config, &excluded, online, true).await?;
 
                 for dep in &mut deps {
                     let license = dep
@@ -255,128 +261,4 @@ async fn run_workspace(
         .any(|d| d.verdict == PolicyVerdict::Error);
 
     Ok(has_errors)
-}
-
-// ── Shared scan logic ─────────────────────────────────────────────────────────
-
-/// Detect ecosystems, analyze manifests, and optionally enrich online.
-/// Returns an empty `Vec` (not an error) when no ecosystems are detected.
-async fn scan_project(
-    path: &Path,
-    _config: &config::Config,
-    excluded: &[Ecosystem],
-    online: bool,
-    quiet: bool,
-) -> Result<Vec<models::Dependency>> {
-    let ecosystems: Vec<Ecosystem> = detect_ecosystems(path)
-        .into_iter()
-        .filter(|e| !excluded.contains(e))
-        .collect();
-
-    if ecosystems.is_empty() {
-        return Ok(Vec::new());
-    }
-
-    let mut all_deps = Vec::new();
-
-    for ecosystem in &ecosystems {
-        let deps = match ecosystem {
-            Ecosystem::Rust => analyzer::rust::RustAnalyzer::new().analyze(path)?,
-            Ecosystem::Python => analyzer::python::PythonAnalyzer::new().analyze(path)?,
-            Ecosystem::Java => analyzer::java::JavaAnalyzer::new().analyze(path)?,
-            Ecosystem::Node => analyzer::node::NodeAnalyzer::new().analyze(path)?,
-            Ecosystem::DotNet => analyzer::dotnet::DotNetAnalyzer::new().analyze(path)?,
-        };
-
-        if !quiet {
-            eprintln!(
-                "    {} {} {} dependencies",
-                "·".dimmed(),
-                ecosystem,
-                deps.len()
-            );
-        }
-
-        all_deps.extend(deps);
-    }
-
-    if online {
-        enrich_online(&mut all_deps, quiet).await?;
-    }
-
-    Ok(all_deps)
-}
-
-// ── Online enrichment ─────────────────────────────────────────────────────────
-
-async fn enrich_online(deps: &mut [models::Dependency], quiet: bool) -> Result<()> {
-    use futures::future::join_all;
-
-    const BATCH_SIZE: usize = 50;
-
-    let client = reqwest::Client::builder()
-        .timeout(std::time::Duration::from_secs(10))
-        .build()?;
-
-    let pb = if !quiet {
-        let pb = ProgressBar::new(deps.len() as u64);
-        pb.set_style(
-            ProgressStyle::default_bar()
-                .template(
-                    "{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} {msg}",
-                )?
-                .progress_chars("#>-"),
-        );
-        Some(pb)
-    } else {
-        None
-    };
-
-    for batch in deps.chunks_mut(BATCH_SIZE) {
-        let handles: Vec<_> = batch
-            .iter()
-            .map(|dep| {
-                let client = client.clone();
-                let name = dep.name.clone();
-                let version = dep.version.clone();
-                let ecosystem = dep.ecosystem.clone();
-                tokio::spawn(async move {
-                    match ecosystem {
-                        Ecosystem::Rust => {
-                            registry::crates_io::fetch_license(&client, &name, &version).await
-                        }
-                        Ecosystem::Python => {
-                            registry::pypi::fetch_license(&client, &name, &version).await
-                        }
-                        Ecosystem::Java => {
-                            registry::maven::fetch_license(&client, &name, &version).await
-                        }
-                        Ecosystem::Node => {
-                            registry::npm::fetch_license(&client, &name, &version).await
-                        }
-                        Ecosystem::DotNet => Ok(None),
-                    }
-                })
-            })
-            .collect();
-
-        let results = join_all(handles).await;
-
-        for (dep, join_result) in batch.iter_mut().zip(results) {
-            if let Ok(Ok(Some(license))) = join_result {
-                dep.license_raw = Some(license.clone());
-                dep.license_spdx = Some(license);
-                dep.source = LicenseSource::Registry;
-            }
-            if let Some(pb) = &pb {
-                pb.inc(1);
-            }
-        }
-    }
-
-    if let Some(pb) = pb {
-        pb.finish_with_message("Done");
-    }
-
-    Ok(())
 }

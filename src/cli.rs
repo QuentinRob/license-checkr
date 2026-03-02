@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use clap::Parser;
+use clap::{Parser, Subcommand};
 
 use crate::models::Ecosystem;
 
@@ -11,6 +11,10 @@ use crate::models::Ecosystem;
     version
 )]
 pub struct Cli {
+    /// Subcommand (e.g. `mcp serve`)
+    #[command(subcommand)]
+    pub command: Option<Commands>,
+
     /// Project path to scan
     #[arg(default_value = ".")]
     pub path: PathBuf,
@@ -46,6 +50,21 @@ pub struct Cli {
     /// Only print summary line
     #[arg(short, long)]
     pub quiet: bool,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum Commands {
+    /// MCP (Model Context Protocol) server commands
+    Mcp {
+        #[command(subcommand)]
+        action: McpAction,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+pub enum McpAction {
+    /// Start an MCP server over stdio for agent tool use
+    Serve,
 }
 
 #[derive(Debug, Clone, clap::ValueEnum)]
