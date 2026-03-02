@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.4] — 2026-03-02
+
+### Changed
+- `classify_and_apply_policy` in `src/mcp.rs` now accepts `&mut [Dependency]`
+  instead of `&mut Vec<Dependency>`, satisfying the Clippy `ptr_arg` lint and
+  following idiomatic Rust API conventions (#57)
+
+---
+
 ## [0.2.3] — 2026-03-02
 
 ### Fixed
@@ -259,6 +268,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.github/workflows/ci.yml` — runs `cargo test` + `cargo clippy` on push/PR to `main`
 - 19 unit tests covering all parsers, SPDX classifier, normalizer, and Maven POM extraction
 
+[0.2.4]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.2.4
 [0.2.3]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.2.3
 [0.2.2]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.2.2
 [0.2.1]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.2.1
