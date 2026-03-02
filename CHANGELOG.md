@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.1] — 2026-03-02
+
+### Changed
+- MCP server now logs lifecycle events (start, ready, disconnect) and tool-call
+  arguments to stderr so MCP clients can observe server activity without
+  corrupting the stdio transport (#53)
+- `mcp serve` catches Ctrl+C via `tokio::signal::ctrl_c()` and shuts down
+  gracefully with exit code 0 instead of propagating a transport error (#53)
+
+---
+
 ## [0.2.0] — 2026-03-02
 
 ### Added
@@ -221,6 +232,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.github/workflows/ci.yml` — runs `cargo test` + `cargo clippy` on push/PR to `main`
 - 19 unit tests covering all parsers, SPDX classifier, normalizer, and Maven POM extraction
 
+[0.2.1]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.2.1
 [0.2.0]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.2.0
 [0.1.6]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.6
 [0.1.5]: https://github.com/QuentinRob/license-checkr/releases/tag/v0.1.5
