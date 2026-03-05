@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] — 2026-03-05
+
+### Added
+- **SBOM generation** (`license-checkr sbom generate`): produce a Software Bill
+  of Materials from scanned project dependencies in three formats:
+  - CycloneDX JSON v1.5 (`--format cyclonedx-json`, default)
+  - CycloneDX XML v1.5 (`--format cyclonedx-xml`)
+  - SPDX JSON v2.3 (`--format spdx-json`)
+- `--output` / `-o` flag to control the SBOM output file path
+- `--pdf` flag to generate an SBOM-specific PDF report alongside the SBOM
+  (defaults to `sbom-report.pdf` when used without a value)
+- `--recursive` / `-r` flag to scan all sub-projects under a workspace root
+  and produce a merged SBOM covering every discovered project
+- `--online`, `--config`, `--exclude-lang` flags mirroring the main scan
+  command for consistent behaviour across all subcommands
+- `src/sbom.rs`: `build_cyclonedx`, `build_spdx`, `cyclonedx_to_json`,
+  `cyclonedx_to_xml`, `spdx_to_json` helpers
+- `src/report/sbom_pdf.rs`: SBOM-specific PDF renderer with `render`
+  (single-project) and `render_workspace` (multi-project) entry points (#60)
+
+---
+
 ## [0.2.4] — 2026-03-02
 
 ### Changed
