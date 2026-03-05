@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.1] — 2026-03-05
+
+### Fixed
+- **Clippy warnings** in SBOM modules resolved (#61):
+  - Extracted `RiskBadge` type alias in `src/report/sbom_pdf.rs` to eliminate
+    the `type_complexity` warning on `risk_badge`'s return type
+  - Removed no-op `& 0xffff` mask after `u16` cast in `src/sbom.rs`
+    (`identity_op` lint)
+  - Added `#[allow(clippy::too_many_arguments)]` on private helpers
+    `run_sbom_single`, `run_sbom_workspace` (`src/main.rs`) and
+    `fill_gradient_h` (`src/report/sbom_pdf.rs`)
+
+---
+
 ## [0.3.0] — 2026-03-05
 
 ### Added
