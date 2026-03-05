@@ -9,7 +9,7 @@
 
 > **Scan your dependencies. Know your risks. Ship with confidence.**
 
-`license-checkr` is a blazing-fast CLI tool written in Rust that scans your project's dependency manifests, resolves license information, evaluates it against a policy you define, and outputs a clear report — in your terminal, as JSON, or as a PDF.
+`license-checkr` is a blazing-fast CLI tool written in Rust that scans your project's dependency manifests, resolves license information, evaluates it against a policy you define, and outputs a clear report — in your terminal, as JSON, as a PDF, or as a standards-compliant SBOM (CycloneDX or SPDX).
 
 ---
 
@@ -24,6 +24,7 @@
 - 📊 **Multiple outputs** — colored terminal table, machine-readable JSON, or a shareable PDF report
 - 🚦 **CI-friendly** — exits with code `1` when a policy error is found; `0` otherwise
 - 🗂️ **Workspace scanning** — use `--recursive` to scan all sub-projects in a monorepo in a single run
+- 📦 **SBOM generation** — export a Software Bill of Materials in CycloneDX JSON/XML (v1.5) or SPDX JSON (v2.3) via `sbom generate`
 - 🤖 **MCP server** — expose `license-checkr` as an MCP tool so AI agents (Claude Desktop, Cursor, etc.) can scan projects and look up licenses directly
 
 ---
@@ -175,6 +176,57 @@ Config file locations:
 Once configured, Claude can answer questions like:
 - *"Scan my project at ~/my-app and show any license errors"*
 - *"What license does serde 1.0 use? Is it compatible with my policy?"*
+
+---
+
+## 📦 SBOM Generation
+
+Generate a standards-compliant Software Bill of Materials from your dependencies:
+
+```bash
+license-checkr sbom generate [OPTIONS] [PATH]
+```
+
+| Option | Description |
+|---|---|
+| `[PATH]` | Project root to scan (default: current directory) |
+| `--format <FORMAT>` | `cyclonedx-json` (default), `cyclonedx-xml`, `spdx-json` |
+| `--output, -o <FILE>` | Output file path (default: `sbom.json` or `sbom.xml`) |
+| `--pdf [FILE]` | Also generate an SBOM PDF report (default: `sbom-report.pdf`) |
+| `--online` | Enrich with license data from package registries |
+| `-r, --recursive` | Workspace mode — merge all sub-projects into a single SBOM |
+| `--config <FILE>` | Policy config override |
+| `--exclude-lang <LANG>` | Skip an ecosystem (repeatable) |
+
+### Examples
+
+```bash
+# Generate a CycloneDX JSON SBOM for the current project
+license-checkr sbom generate
+
+# CycloneDX XML format
+license-checkr sbom generate --format cyclonedx-xml --output sbom.xml
+
+# SPDX JSON format with online enrichment
+license-checkr sbom generate --format spdx-json --online
+
+# Custom output path
+license-checkr sbom generate --output /tmp/my-project-sbom.json
+
+# Also produce a PDF summary alongside the SBOM
+license-checkr sbom generate --pdf
+
+# Workspace mode — single SBOM covering all sub-projects
+license-checkr sbom generate --recursive --output workspace-sbom.json
+```
+
+### Supported SBOM formats
+
+| Format | Standard | Extension |
+|---|---|---|
+| `cyclonedx-json` | CycloneDX v1.5 JSON | `.json` |
+| `cyclonedx-xml` | CycloneDX v1.5 XML | `.xml` |
+| `spdx-json` | SPDX v2.3 JSON | `.json` |
 
 ---
 
