@@ -19,21 +19,22 @@ mod mcp;
 mod models;
 mod registry;
 mod report;
+mod sbom;
 mod scanner;
 mod updater;
 
 use std::path::Path;
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use clap::Parser;
 use colored::Colorize;
 use serde::Serialize;
 
-use cli::{Cli, Commands, McpAction, ReportFormat};
+use cli::{Cli, Commands, McpAction, ReportFormat, SbomAction, SbomFormat};
 use config::{apply_policy, load_config};
 use detector::detect_ecosystems;
 use license::classifier::classify;
-use models::{Ecosystem, PolicyVerdict, ProjectScan};
+use models::{Dependency, Ecosystem, PolicyVerdict, ProjectScan};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -44,6 +45,12 @@ async fn main() -> Result<()> {
     if let Some(Commands::Mcp { action: McpAction::Serve }) = &cli.command {
         mcp::serve().await?;
         return Ok(());
+    }
+
+    // Dispatch SBOM subcommand.
+    if let Some(Commands::Sbom { action }) = &cli.command {
+        updater::check_for_update().await;
+        return run_sbom(action).await;
     }
 
     // Check for a newer release on GitHub (skipped in quiet/scripting mode).
@@ -268,4 +275,176 @@ async fn run_workspace(
         .any(|d| d.verdict == PolicyVerdict::Error);
 
     Ok(has_errors)
+}
+
+// ── SBOM subcommand ───────────────────────────────────────────────────────────
+
+async fn run_sbom(action: &SbomAction) -> Result<()> {
+    let SbomAction::Generate {
+        path,
+        format,
+        output,
+        pdf,
+        online,
+        recursive,
+        config: config_override,
+        exclude_lang,
+    } = action;
+
+    let path = path.canonicalize().unwrap_or_else(|_| path.clone());
+    let excluded: Vec<Ecosystem> = exclude_lang.iter().map(Into::into).collect();
+
+    let format_str = match format {
+        SbomFormat::CycloneDxJson => "cyclonedx-json",
+        SbomFormat::CycloneDxXml  => "cyclonedx-xml",
+        SbomFormat::SpdxJson      => "spdx-json",
+    };
+
+    let default_ext = match format {
+        SbomFormat::CycloneDxXml => "sbom.xml",
+        _                        => "sbom.json",
+    };
+    let output_path = output.clone().unwrap_or_else(|| std::path::PathBuf::from(default_ext));
+    let pdf_path = pdf.clone().unwrap_or_else(|| std::path::PathBuf::from("sbom-report.pdf"));
+
+    if *recursive {
+        run_sbom_workspace(&path, &excluded, *online, config_override.as_deref(), format, format_str, &output_path, pdf).await
+    } else {
+        run_sbom_single(&path, &excluded, *online, config_override.as_deref(), format, format_str, &output_path, pdf, &pdf_path).await
+    }
+}
+
+async fn run_sbom_single(
+    path: &std::path::Path,
+    excluded: &[Ecosystem],
+    online: bool,
+    config_override: Option<&std::path::Path>,
+    format: &SbomFormat,
+    format_str: &str,
+    output_path: &std::path::Path,
+    pdf_flag: &Option<std::path::PathBuf>,
+    pdf_path: &std::path::Path,
+) -> Result<()> {
+    let config = load_config(path, config_override)?;
+
+    let ecosystems: Vec<Ecosystem> = detect_ecosystems(path)
+        .into_iter()
+        .filter(|e| !excluded.contains(e))
+        .collect();
+
+    if ecosystems.is_empty() {
+        eprintln!("No supported project manifests found in {}", path.display());
+        std::process::exit(1);
+    }
+
+    let mut deps = scanner::scan_project(path, &config, excluded, online, false).await?;
+    for dep in &mut deps {
+        let license = dep.license_spdx.as_deref().or(dep.license_raw.as_deref()).unwrap_or("unknown");
+        dep.risk = classify(license);
+        dep.verdict = apply_policy(&config, Some(license));
+    }
+
+    let project_name = path.file_name().and_then(|n| n.to_str()).unwrap_or("project");
+
+    let sbom_bytes = match format {
+        SbomFormat::CycloneDxJson => {
+            let bom = sbom::build_cyclonedx(project_name, &deps);
+            sbom::cyclonedx_to_json(&bom)?
+        }
+        SbomFormat::CycloneDxXml => {
+            let bom = sbom::build_cyclonedx(project_name, &deps);
+            sbom::cyclonedx_to_xml(&bom)?
+        }
+        SbomFormat::SpdxJson => {
+            let doc = sbom::build_spdx(project_name, &deps);
+            sbom::spdx_to_json(&doc)?
+        }
+    };
+
+    std::fs::write(output_path, &sbom_bytes)
+        .with_context(|| format!("Failed to write SBOM to {}", output_path.display()))?;
+    println!("SBOM ({}) written to: {}", format_str, output_path.display());
+
+    if pdf_flag.is_some() {
+        report::sbom_pdf::render(&deps, path, format_str, pdf_path)?;
+    }
+
+    Ok(())
+}
+
+async fn run_sbom_workspace(
+    root: &std::path::Path,
+    excluded: &[Ecosystem],
+    online: bool,
+    config_override: Option<&std::path::Path>,
+    format: &SbomFormat,
+    format_str: &str,
+    output_path: &std::path::Path,
+    pdf_flag: &Option<std::path::PathBuf>,
+) -> Result<()> {
+    let project_paths = detector::find_workspace_projects(root);
+    if project_paths.is_empty() {
+        eprintln!("No sub-projects found under {}", root.display());
+        std::process::exit(1);
+    }
+
+    let tasks: Vec<_> = project_paths
+        .into_iter()
+        .map(|proj_path| {
+            let excluded = excluded.to_vec();
+            let config_override = config_override.map(|p| p.to_path_buf());
+
+            tokio::spawn(async move {
+                let name = proj_path.file_name().and_then(|n| n.to_str()).unwrap_or("unknown").to_string();
+                let proj_config = load_config(&proj_path, config_override.as_deref())?;
+                let mut deps = scanner::scan_project(&proj_path, &proj_config, &excluded, online, true).await?;
+                for dep in &mut deps {
+                    let license = dep.license_spdx.as_deref().or(dep.license_raw.as_deref()).unwrap_or("unknown");
+                    dep.risk = classify(license);
+                    dep.verdict = apply_policy(&proj_config, Some(license));
+                }
+                Ok::<ProjectScan, anyhow::Error>(ProjectScan { name, path: proj_path, deps })
+            })
+        })
+        .collect();
+
+    let mut projects: Vec<ProjectScan> = futures::future::join_all(tasks)
+        .await
+        .into_iter()
+        .map(|r| r.expect("project scan task panicked"))
+        .collect::<Result<Vec<_>>>()?;
+    projects.retain(|p| !p.deps.is_empty());
+
+    if projects.is_empty() {
+        eprintln!("No dependencies found in any sub-project.");
+        return Ok(());
+    }
+
+    let all_deps: Vec<Dependency> = projects.iter().flat_map(|p| p.deps.iter().cloned()).collect();
+    let workspace_name = root.file_name().and_then(|n| n.to_str()).unwrap_or("workspace");
+
+    let sbom_bytes = match format {
+        SbomFormat::CycloneDxJson => {
+            let bom = sbom::build_cyclonedx(workspace_name, &all_deps);
+            sbom::cyclonedx_to_json(&bom)?
+        }
+        SbomFormat::CycloneDxXml => {
+            let bom = sbom::build_cyclonedx(workspace_name, &all_deps);
+            sbom::cyclonedx_to_xml(&bom)?
+        }
+        SbomFormat::SpdxJson => {
+            let doc = sbom::build_spdx(workspace_name, &all_deps);
+            sbom::spdx_to_json(&doc)?
+        }
+    };
+
+    std::fs::write(output_path, &sbom_bytes)
+        .with_context(|| format!("Failed to write SBOM to {}", output_path.display()))?;
+    println!("SBOM ({}) written to: {}", format_str, output_path.display());
+
+    if let Some(ref pdf_path) = pdf_flag {
+        report::sbom_pdf::render_workspace(&projects, format_str, pdf_path)?;
+    }
+
+    Ok(())
 }
