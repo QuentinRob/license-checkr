@@ -16,6 +16,8 @@ use printpdf::path::{PaintMode, WindingOrder};
 
 use crate::models::{Dependency, LicenseRisk, ProjectScan};
 
+type RiskBadge = (&'static str, (f32, f32, f32), (f32, f32, f32));
+
 // ── Identical palette to pdf.rs ───────────────────────────────────────────────
 const PAGE_W: f32 = 210.0;
 const PAGE_H: f32 = 297.0;
@@ -623,7 +625,7 @@ fn add_component_table_pages(
     Ok(())
 }
 
-fn risk_badge(risk: &LicenseRisk) -> (&'static str, (f32, f32, f32), (f32, f32, f32)) {
+fn risk_badge(risk: &LicenseRisk) -> RiskBadge {
     match risk {
         LicenseRisk::Permissive    => ("PERMISSIVE", PASS_FG, PASS_BG),
         LicenseRisk::WeakCopyleft  => ("WK COPYLEFT", WARN_FG, WARN_BG),
@@ -729,6 +731,7 @@ fn draw_hline(layer: &PdfLayerReference, x1: f32, x2: f32, y: f32,
     layer.set_outline_thickness(1.0);
 }
 
+#[allow(clippy::too_many_arguments)]
 fn fill_gradient_h(
     layer: &PdfLayerReference,
     x: f32, y: f32, w: f32, h: f32,

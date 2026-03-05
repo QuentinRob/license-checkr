@@ -379,7 +379,7 @@ fn pseudo_uuid() -> String {
     format!(
         "{:08x}-{:04x}-4{:03x}-{:04x}-{:012x}",
         (n >> 96) as u32,
-        ((n >> 80) as u16) & 0xffff,
+        (n >> 80) as u16,
         ((n >> 68) as u16) & 0x0fff,
         (((n >> 52) as u16) & 0x3fff) | 0x8000,
         (n & 0xffffffffffff_u128) as u64,

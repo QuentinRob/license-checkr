@@ -314,6 +314,7 @@ async fn run_sbom(action: &SbomAction) -> Result<()> {
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 async fn run_sbom_single(
     path: &std::path::Path,
     excluded: &[Ecosystem],
@@ -372,6 +373,7 @@ async fn run_sbom_single(
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)]
 async fn run_sbom_workspace(
     root: &std::path::Path,
     excluded: &[Ecosystem],
