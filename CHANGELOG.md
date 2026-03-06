@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.2] — 2026-03-06
+
+### Added
+- **GitLab Code Quality report** (`--report gitlab`): emit a GitLab Code Quality
+  JSON artifact consumable as a `codequality` CI artifact. License violations
+  (`warn`/`error` verdicts) appear as inline annotations on every Merge Request.
+  - `error` verdict → `blocker` severity
+  - `warn` verdict → `minor` severity
+  - `pass` dependencies omitted from output
+  - Works with `--recursive` for monorepo workspace scanning
+- Full GitLab CI YAML example documented in README and landing page
+
+### Documentation
+- Extended README and `docs/index.html` with SBOM generation details and
+  GitLab CI integration section
+
+---
+
 ## [0.3.1] — 2026-03-05
 
 ### Fixed
