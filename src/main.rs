@@ -134,6 +134,9 @@ async fn run_single(
         ReportFormat::Pdf => {
             report::pdf::render(&all_deps, path, pdf_path)?;
         }
+        ReportFormat::Gitlab => {
+            println!("{}", report::gitlab::render(&all_deps)?);
+        }
     }
 
     Ok(all_deps.iter().any(|d| d.verdict == PolicyVerdict::Error))
@@ -266,6 +269,9 @@ async fn run_workspace(
         }
         ReportFormat::Pdf => {
             report::pdf::render_workspace(&projects, pdf_path)?;
+        }
+        ReportFormat::Gitlab => {
+            println!("{}", report::gitlab::render_workspace(&projects)?);
         }
     }
 

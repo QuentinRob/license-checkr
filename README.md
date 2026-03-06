@@ -23,6 +23,7 @@
 - 🧮 **Expression support** — parses full SPDX compound expressions including `(Apache-2.0 OR MIT) AND BSD-3-Clause` with proper operator precedence (`AND` binds tighter than `OR`, parentheses override)
 - 📊 **Multiple outputs** — colored terminal table, machine-readable JSON, or a shareable PDF report
 - 🚦 **CI-friendly** — exits with code `1` when a policy error is found; `0` otherwise
+- 🦊 **GitLab integration** — `--report gitlab` outputs a Code Quality JSON artifact that renders inline on Merge Requests
 - 🗂️ **Workspace scanning** — use `--recursive` to scan all sub-projects in a monorepo in a single run
 - 📦 **SBOM generation** — export a Software Bill of Materials in CycloneDX JSON/XML (v1.5) or SPDX JSON (v2.3) via `sbom generate`
 - 🤖 **MCP server** — expose `license-checkr` as an MCP tool so AI agents (Claude Desktop, Cursor, etc.) can scan projects and look up licenses directly
@@ -88,7 +89,7 @@ license-checkr [OPTIONS] [PATH]
 | `[PATH]` | Project root to scan (default: current directory) |
 | `--online` | Fetch license data from package registries |
 | `--config <FILE>` | Override policy config file path |
-| `--report <FORMAT>` | Output format: `terminal` (default), `json`, `pdf` |
+| `--report <FORMAT>` | Output format: `terminal` (default), `json`, `pdf`, `gitlab` |
 | `--pdf [FILE]` | Write PDF report (default: `license-report.pdf`) |
 | `--exclude-lang <LANG>` | Skip an ecosystem: `rust` `python` `java` `node` `dotnet` (repeatable) |
 | `-r, --recursive` | Recursively scan sub-projects (workspace mode) |
@@ -136,6 +137,62 @@ license-checkr --recursive -q && echo "✅ All workspace licenses OK"
 ```
 
 Each sub-project is scanned independently with its own policy config (if present). The PDF report includes a workspace cover page with an aggregated summary, followed by per-project Risk Summary and Dependency Table sections.
+
+---
+
+## 🦊 GitLab CI Integration
+
+`license-checkr` can produce a [GitLab Code Quality](https://docs.gitlab.com/ee/ci/testing/code_quality.html) artifact so that license violations appear inline on every Merge Request.
+
+```bash
+license-checkr --report gitlab
+```
+
+The output is a JSON array where every dependency with a `warn` or `error` verdict becomes a Code Quality issue. `pass` verdicts are omitted.
+
+| Policy verdict | GitLab severity |
+|---|---|
+| `error` | `blocker` |
+| `warn` | `minor` |
+| `pass` | *(omitted)* |
+
+### Example output
+
+```json
+[
+  {
+    "description": "Dependency 'some-gpl-lib@2.1.0' uses license 'GPL-3.0' — policy verdict: error",
+    "check_name": "license-checkr/license-error",
+    "fingerprint": "a3f1c2d4e5b6a7f8",
+    "severity": "blocker",
+    "location": {
+      "path": "Cargo.lock",
+      "lines": { "begin": 1 }
+    }
+  }
+]
+```
+
+### GitLab CI YAML example
+
+```yaml
+license-check:
+  stage: test
+  image: rust:latest
+  script:
+    - cargo install --git https://github.com/QuentinRob/license-checkr
+    - license-checkr --report gitlab > gl-code-quality-report.json
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
+  allow_failure: true   # remove this line to block MRs on license errors
+```
+
+For workspace (monorepo) scanning, add `--recursive`:
+
+```yaml
+    - license-checkr --recursive --report gitlab > gl-code-quality-report.json
+```
 
 ---
 
@@ -332,6 +389,14 @@ license-checkr --report json
   }
 ]
 ```
+
+### GitLab Code Quality
+
+```bash
+license-checkr --report gitlab > gl-code-quality-report.json
+```
+
+Outputs a JSON array of Code Quality issues (warn/error verdicts only) consumable by GitLab CI as a `codequality` artifact.
 
 ### PDF
 

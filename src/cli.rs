@@ -129,6 +129,9 @@ pub enum ReportFormat {
     Terminal,
     Json,
     Pdf,
+    /// GitLab Code Quality JSON artifact
+    #[value(name = "gitlab")]
+    Gitlab,
 }
 
 #[derive(Debug, Clone, clap::ValueEnum)]

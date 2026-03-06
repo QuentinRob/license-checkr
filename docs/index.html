@@ -776,6 +776,7 @@
       license-checkr
     </a>
     <div class="nav-links">
+      <a href="#gitlab" class="btn btn-ghost" style="font-size:0.8rem;">GitLab CI</a>
       <a href="https://github.com/QuentinRob/license-checkr/releases" class="btn btn-ghost" style="font-size:0.8rem;">Releases</a>
       <a href="https://github.com/QuentinRob/license-checkr" class="btn btn-ghost" style="font-size:0.8rem;">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -801,7 +802,7 @@
   <div class="container">
     <div class="hero-badge">
       <div class="hero-badge-dot"></div>
-      Rust &nbsp;·&nbsp; Fast &nbsp;·&nbsp; CI-Ready &nbsp;·&nbsp; VERSION_PLACEHOLDER
+      Rust &nbsp;·&nbsp; Fast &nbsp;·&nbsp; CI-Ready &nbsp;·&nbsp; GitLab Integration &nbsp;·&nbsp; VERSION_PLACEHOLDER
     </div>
     <h1>Know every license<br>in your project</h1>
     <p class="hero-sub">
@@ -849,7 +850,7 @@
   <div class="stats-inner fade-in">
     <div class="stat-item"><div class="stat-value">5</div><div class="stat-label">Ecosystems</div></div>
     <div class="stat-item"><div class="stat-value">10+</div><div class="stat-label">Manifest formats</div></div>
-    <div class="stat-item"><div class="stat-value">3</div><div class="stat-label">Report formats</div></div>
+    <div class="stat-item"><div class="stat-value">4</div><div class="stat-label">Report formats</div></div>
     <div class="stat-item"><div class="stat-value">0</div><div class="stat-label">Config required</div></div>
   </div>
 </div>
@@ -885,8 +886,13 @@
       </div>
       <div class="feature-card glass" style="border-radius:var(--r-xl)">
         <span class="feature-icon">📊</span>
-        <h3>Three Output Formats</h3>
-        <p>Colored terminal table for local development, structured JSON for pipelines, or a polished multi-page PDF to share with your legal team.</p>
+        <h3>Four Output Formats</h3>
+        <p>Colored terminal table for local development, structured JSON for pipelines, a polished multi-page PDF for your legal team, or a <strong>GitLab Code Quality artifact</strong> that surfaces violations inline on every Merge Request.</p>
+      </div>
+      <div class="feature-card glass" style="border-radius:var(--r-xl)">
+        <span class="feature-icon">🦊</span>
+        <h3>GitLab CI Integration</h3>
+        <p>Use <code>--report gitlab</code> to emit a Code Quality JSON artifact. Violations appear as inline annotations on Merge Requests — no extra tooling required.</p>
       </div>
       <div class="feature-card glass" style="border-radius:var(--r-xl)">
         <span class="feature-icon">🗂️</span>
@@ -1087,6 +1093,55 @@
         <h3>Enforce</h3>
         <p>Plug into your CI pipeline. Exits <code>1</code> on policy violations — blocking merges before problematic licenses sneak in.</p>
         <code class="step-snip">license-checkr -q</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ GITLAB CI ═══════════════════ -->
+<section id="gitlab" class="alt-bg" style="position:relative;overflow:hidden;">
+  <div class="mesh" style="opacity:0.5">
+    <div class="orb" style="width:500px;height:500px;background:rgba(252,109,38,0.12);top:-80px;right:-120px;animation-delay:-5s;filter:blur(120px);"></div>
+    <div class="orb" style="width:350px;height:350px;background:var(--orb-1);bottom:-60px;left:0;animation-delay:-2s;filter:blur(90px);"></div>
+  </div>
+  <div class="container" style="position:relative;z-index:1">
+    <div class="policy-layout">
+      <div class="policy-text fade-in">
+        <div class="section-tag">GitLab CI</div>
+        <h2>License violations<br>inline on every MR.</h2>
+        <p>Use <code style="font-size:0.88em;color:var(--text-2);background:var(--glass-bg);border:1px solid var(--glass-border);padding:2px 6px;border-radius:5px;">--report gitlab</code> to produce a <a href="https://docs.gitlab.com/ee/ci/testing/code_quality.html" style="color:var(--green)">GitLab Code Quality</a> JSON artifact. Upload it as a CI artifact and violations appear as inline annotations on every Merge Request — no extra tools or plugins required.</p>
+        <ul class="policy-points">
+          <li><strong>blocker</strong> severity for <code>error</code> policy verdicts</li>
+          <li><strong>minor</strong> severity for <code>warn</code> policy verdicts</li>
+          <li><code>pass</code> dependencies are silently omitted</li>
+          <li>Works with <code>--recursive</code> for monorepo workspaces</li>
+        </ul>
+      </div>
+      <div class="fade-in">
+        <div class="code-block">
+          <div class="code-block-hdr">.gitlab-ci.yml</div>
+          <pre>
+<span class="tk-q">license-check</span><span class="tk-k">:</span>
+  <span class="tk-q">stage</span><span class="tk-k">:</span> <span class="tk-w">test</span>
+  <span class="tk-q">image</span><span class="tk-k">:</span> <span class="tk-w">rust:latest</span>
+  <span class="tk-q">script</span><span class="tk-k">:</span>
+    <span class="tk-p">- cargo install --git https://github.com/QuentinRob/license-checkr</span>
+    <span class="tk-p">- license-checkr --report gitlab &gt; gl-code-quality-report.json</span>
+  <span class="tk-q">artifacts</span><span class="tk-k">:</span>
+    <span class="tk-q">reports</span><span class="tk-k">:</span>
+      <span class="tk-q">codequality</span><span class="tk-k">:</span> <span class="tk-w">gl-code-quality-report.json</span></pre>
+        </div>
+        <div style="margin-top:16px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--r);padding:16px 20px;">
+          <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">Example output</div>
+          <pre style="font-size:0.78rem;color:var(--text-2);overflow-x:auto;"><span class="tk-p">[</span>
+  <span class="tk-s">{</span>
+    <span class="tk-q">"description"</span><span class="tk-k">:</span> <span class="tk-w">"Dependency 'some-gpl-lib@2.1.0'<br>    uses license 'GPL-3.0' — verdict: error"</span>,
+    <span class="tk-q">"check_name"</span><span class="tk-k">:</span> <span class="tk-w">"license-checkr/license-error"</span>,
+    <span class="tk-q">"severity"</span><span class="tk-k">:</span> <span class="tk-w">"blocker"</span>,
+    <span class="tk-q">"location"</span><span class="tk-k">:</span> <span class="tk-s">{ "path": "Cargo.lock", "lines": {"begin": 1} }</span>
+  <span class="tk-s">}</span>
+<span class="tk-p">]</span></pre>
+        </div>
       </div>
     </div>
   </div>
